@@ -20,6 +20,16 @@ This is a [Go](https://go.dev/) port of my bash script https://github.com/muquit
 - No complex configuration files
 - Just uncomment platforms in platforms.txt to build for them
 
+## Options
+
+```
+A program to cross compile go programs
+  -help
+    	Show help information and exit
+  -version
+    	Show version information and exit
+```
+
 ## Download
 
 Download pre-compiled binaries from

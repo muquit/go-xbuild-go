@@ -9,6 +9,7 @@ package main
 
 
 import (
+	"flag"
 	"archive/tar"
 	"archive/zip"
 	"bufio"
@@ -24,6 +25,10 @@ import (
 	"strings"
 )
 
+const (
+	version = "1.0.1"
+)
+
 // Configuration constants
 type Config struct {
 	ProjectName   string
@@ -36,6 +41,35 @@ type Config struct {
 }
 
 func main() {
+	var showVersion bool
+	var showHelp bool
+
+	flag.BoolVar(&showVersion, "version", false, "Show version information and exit")
+	flag.BoolVar(&showHelp, "help", false, "Show help information and exit")
+
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "%s v%s\n", os.Args[0], version)
+		fmt.Fprintf(os.Stderr, "A program to cross compile go programs\n")
+		flag.PrintDefaults()
+	}
+	flag.Parse()
+
+    if showVersion {
+        fmt.Printf("%s v%s\n", os.Args[0], version)
+        os.Exit(0)
+    }
+
+	if showHelp {
+        fmt.Printf("%s v%s\n", os.Args[0], version)
+		fmt.Println("A program to cross compile go programs for various platforms\n")
+		fmt.Println("- Copy platforms.txt at the root of your project")
+		fmt.Println("- Edit platforms.txt to uncomment the platforms you want to build for")
+		fmt.Println("- Create a VERSION file with your version (e.g. v1.0.1)")
+		fmt.Println("- Then run go-xbuild-go\n")
+		os.Exit(0)
+	}
+
+
 	// Get current directory
 	myDir, err := os.Getwd()
 	if err != nil {
