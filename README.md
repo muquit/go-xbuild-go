@@ -108,12 +108,7 @@ The following files will be included in archives if they exist:
 Pull requests welcome! Please keep it simple.
 
 ## License
-MIT License. See LICENSE.txt
+MIT License - See LICENSE.txt file for details.
 
 ## Author
 Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
-
-## License
-
-MIT License - See LICENSE.txt file for details.
-
