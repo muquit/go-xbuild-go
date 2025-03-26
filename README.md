@@ -1,6 +1,7 @@
 # go-xbuild-go
 
-Cross compile Go projects without the complexity of [GoReleaser](https://goreleaser.com/).
+A [Go](https://go.dev/) program to cross compile 
+[Go](https://go.dev/) projects without the complexity of [GoReleaser](https://goreleaser.com/).
 
 It was written from the frustration of using [GoReleaser](https://goreleaser.com/). I don't 
 release often, whenever the time comes to release using GoReleaser, 
