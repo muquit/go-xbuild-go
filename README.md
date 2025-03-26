@@ -1,4 +1,4 @@
-# go-xbuild
+# go-xbuild-go
 
 This is a Go port of my bash script https://github.com/muquit/go-xbuild
 
