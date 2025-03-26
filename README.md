@@ -9,7 +9,7 @@ I got tired of dealing with GoReleaser's complexity when I only release
 software occasionally. When I release every 6-12 months or so, GoReleaser's
 config often needs updates due to changes. This simple program just works.
 
-This is a Go port of my bash script https://github.com/muquit/go-xbuild
+This is a [Go](https://go.dev/) port of my bash script https://github.com/muquit/go-xbuild
 
 ## Features
 - Simple to use and maintain
