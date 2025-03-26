@@ -1,7 +1,5 @@
 # go-xbuild-go
 
-This is a Go port of my bash script https://github.com/muquit/go-xbuild
-
 Cross compile Go projects without the complexity of [GoReleaser](https://goreleaser.com/).
 
 It was written from the frustration of using [GoReleaser](https://goreleaser.com/). I don't 
@@ -10,6 +8,8 @@ something has changed.
 I got tired of dealing with GoReleaser's complexity when I only release
 software occasionally. When I release every 6-12 months or so, GoReleaser's
 config often needs updates due to changes. This simple program just works.
+
+This is a Go port of my bash script https://github.com/muquit/go-xbuild
 
 ## Features
 - Simple to use and maintain
