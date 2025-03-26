@@ -22,7 +22,8 @@ This is a [Go](https://go.dev/) port of my bash script https://github.com/muquit
 
 ## Download
 
-Download pre-compiled binaries from Releases page
+Download pre-compiled binaries from
+[Releases](https://github.com/muquit/go-xbuild-go/releases)Releases page
 
 ## Building from source
 
