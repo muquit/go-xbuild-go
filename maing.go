@@ -27,6 +27,7 @@ import (
 
 const (
 	version = "1.0.1"
+	url = "https://github.com/muquit/go-xbuild-go"
 )
 
 // Configuration constants
@@ -110,6 +111,8 @@ func process(config *Config) error {
 	}
 
 	fmt.Printf("Building %s version %s\n", config.ProjectName, version)
+	fmt.Printf("%s version %s\n", config.ProjectName, version)
+	fmt.Printf("The binaries are cross compiled with %s\n", url)
 
 	// Clean existing checksums
 	checksumFile := filepath.Join(config.BinDir, fmt.Sprintf("%s-%s-%s", config.ProjectName, version, config.ChecksumsFile))

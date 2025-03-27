@@ -105,6 +105,30 @@ The following files will be included in archives if they exist:
 - LICENSE.txt
 - docs/project-name.1 (man page)
 
+## How to make a release
+
+I use [gh](https://cli.github.com/) cli to create releases eand upload the assets
+for the release.
+
+* Get github token from _Profile image -> Settings -> Developer Settings_
+* Click on _Personal access tokens_
+* Select _Tokens (classic)_
+* Select the Checkbox at the left side of _repo_
+* Click on _Generate token_ at the bottom
+* Copy the token. You will not see it again
+* Save the token in a secure way
+
+Then run:
+
+```
+export GITHUB_TOKEN=gihub_token
+gh release create v1.0.1 \
+       --notes 'my release note' \
+       'bin/*'
+gh release list
+```
+
+
 ## Contributing
 Pull requests welcome! Please keep it simple.
 
