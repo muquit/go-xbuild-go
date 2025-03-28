@@ -31,6 +31,15 @@ A program to cross compile go programs
     	Show version information and exit
 ```
 
+## Quick Start
+
+Install [Go](https://go.dev/) first
+
+```bash
+go install github.com/muquit/go-xbuild-go@latest
+go-xbuild-go -version
+```
+
 ## Download
 
 Download pre-compiled binaries from
@@ -46,13 +55,17 @@ cd go-xbuild-go
 go build .
 ```
 
-## Setup
-1. Copy go-xbuild-go somewhere in your PATH
-2. Copy platforms.txt to your project root
-2. Create a VERSION file with your version (e.g., v1.0.1)
-3. Edit platforms.txt to uncomment the platforms you want to build for
+## How to use
 
-go programs can be cross compiled for more than 40 platforms. 
+- Copy go-xbuild-go somewhere in your PATH. If you followed the step in *Quick Start*, it should
+   be  already in your path.
+- Copy *platforms.txt* to your go project's root directory.
+- Create a VERSION file with your version (e.g., v1.0.1).
+- Edit platforms.txt to uncomment the platforms you want to build for.
+
+go programs can be cross compiled for more than 40 platforms. `go tool dist list` for the list
+supporeted by your version of go.
+
 A few lines of platforms.txt is shown below:
 ```text
 ########################################################################
@@ -73,7 +86,9 @@ linux/amd64
 ```
 
 ## Usage
-Run go-xbuild-go from the root of your project. 
+Run go-xbuild-go from the root of your project.  Update VERSION file if needed.
+Then, compile the binaries:
+
 ```bash
 go-xbuild-go
 ```
@@ -84,7 +99,7 @@ The program will:
 3. Build for all uncommented platforms in platforms.txt
 4. Create appropriate archives (ZIP for Windows, tar.gz for others)
 5. Generate checksums for all archives
-6. Place all artifacts in ./bin directory
+6. Place all artifacts in _./bin_ directory
 
 ## Output Structure
 ```
@@ -107,8 +122,9 @@ The following files will be included in archives if they exist:
 
 ## How to make a release
 
+Now that you cross-compipled and created archives for your go project, here is how
 I use [gh](https://cli.github.com/) cli to create releases eand upload the assets
-for the release.
+for the release to github.
 
 * Get github token from _Profile image -> Settings -> Developer Settings_
 * Click on _Personal access tokens_
@@ -118,9 +134,13 @@ for the release.
 * Copy the token. You will not see it again
 * Save the token in a secure way
 
+Look at VERSION file, use tat as release tag.
+
 Then run:
 
 ```
+cat VERSION
+v1.0.1
 export GITHUB_TOKEN=gihub_token
 gh release create v1.0.1 \
        --notes 'my release note' \
