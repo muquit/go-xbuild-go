@@ -125,7 +125,7 @@ The following files will be included in archives if they exist:
 
 Now that you cross-compiled and created archives for your go project, you can use the included release script to publish to GitHub:
 
-1. Make sure you have the [GitHub CLI gh](https://cli.github.com/) is installed
+1. Make sure you have the [GitHub CLI, gh](https://cli.github.com/) is installed
 2. Copy `mk_release.sh` to somewhere in your PATH, just like you did with go-xbuild-go
 3. Set up your GitHub token:
    * Get a GitHub token from _Profile image -> Settings -> Developer Settings_
