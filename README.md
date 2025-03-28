@@ -1,7 +1,7 @@
 # go-xbuild-go
 
-A [Go](https://go.dev/) program to cross compile 
-[Go](https://go.dev/) projects without the complexity of [GoReleaser](https://goreleaser.com/).
+A [go](https://go.dev/) program to cross compile 
+[go](https://go.dev/) projects without the complexity of [GoReleaser](https://goreleaser.com/).
 
 It was written from the frustration of using [GoReleaser](https://goreleaser.com/). I don't 
 release often, whenever the time comes to release using GoReleaser, 
@@ -11,7 +11,7 @@ software occasionally. When I release every 6-12 months or so, GoReleaser's
 config often needs updates due to changes. This simple program just works. 
 Hope you will find it useful and fun to use.
 
-This is a [Go](https://go.dev/) port of my bash script https://github.com/muquit/go-xbuild
+This is a [go](https://go.dev/) port of my bash script https://github.com/muquit/go-xbuild
 
 ## Features
 - Simple to use and maintain
@@ -34,7 +34,7 @@ A program to cross compile go programs
 
 ## Quick Start
 
-Install [Go](https://go.dev/) first
+Install [go](https://go.dev/) first
 
 ```bash
 go install github.com/muquit/go-xbuild-go@latest
@@ -55,7 +55,7 @@ platforms yo do not want
 
 ## Building from source
 
-Install [Go](https://go.dev/) first
+Install [go](https://go.dev/) first
 
 ```bash
 git clone https://github.com/muquit/go-xbuild-go
