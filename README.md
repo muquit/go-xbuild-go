@@ -122,8 +122,8 @@ The following files will be included in archives if they exist:
 
 ## How to make a release
 
-Now that you cross-compipled and created archives for your go project, here is how
-I use [gh](https://cli.github.com/) cli to create releases eand upload the assets
+Now that you cross-compiled and created archives for your go project, here is how
+I use [gh](https://cli.github.com/) cli to create releases and upload the assets
 for the release to github.
 
 * Get github token from _Profile image -> Settings -> Developer Settings_
@@ -134,7 +134,7 @@ for the release to github.
 * Copy the token. You will not see it again
 * Save the token in a secure way
 
-Look at VERSION file, use tat as release tag.
+Look at VERSION file, use that as release tag.
 
 Then run:
 
