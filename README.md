@@ -58,11 +58,11 @@ go build .
 
 ## How to use
 
-- Copy go-xbuild-go somewhere in your PATH. If you followed the step in *Quick Start*, it should
+- Copy `go-xbuild-go` somewhere in your PATH. If you followed the step in *Quick Start*, it should
    be  already in your path.
-- Copy *platforms.txt* to your go project's root directory.
-- Create a VERSION file with your version (e.g., v1.0.1).
-- Edit platforms.txt to uncomment the platforms you want to build for.
+- Copy `platforms.txt` to your go project's root directory.
+- Create a `VERSION` file with your version (e.g., v1.0.1).
+- Edit `platforms.txt` to uncomment the platforms you want to build for.
 
 go programs can be cross compiled for more than 40 platforms. `go tool dist list` for the list
 supported by your version of go.
