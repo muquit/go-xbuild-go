@@ -40,14 +40,18 @@ Install [Go](https://go.dev/) first
 go install github.com/muquit/go-xbuild-go@latest
 go-xbuild-go -version
 ```
-Download `platforms.txt` file. It must be copied to your pojrect's root
+* Download `platforms.txt` file. It must be copied to your pojrect's root
+* You can create it with `go tool dist list` if you want and comment out
+platforms yo do not want
 
 ## Download
 
 Download pre-compiled binaries from
 [Releases](https://github.com/muquit/go-xbuild-go/releases) page
 
-Download `platforms.txt` file. It must be copied to your pojrect's root
+* Download `platforms.txt` file. It must be copied to your pojrect's root
+* You can create it with `go tool dist list` if you want and comment out
+platforms yo do not want
 
 ## Building from source
 
