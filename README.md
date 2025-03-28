@@ -122,32 +122,24 @@ The following files will be included in archives if they exist:
 
 ## How to release your project to github
 
-Now that you cross-compiled and created archives for your go project, here is how
-I use [gh](https://cli.github.com/) cli to create releases and upload the assets
-for the release to github.
+Now that you cross-compiled and created archives for your go project, you can use the included release script to publish to GitHub:
 
-* Get github token from _Profile image -> Settings -> Developer Settings_
-* Click on _Personal access tokens_
-* Select _Tokens (classic)_
-* Select the Checkbox at the left side of _repo_
-* Click on _Generate token_ at the bottom
-* Copy the token. You will not see it again
-* Save the token in a secure way
+1. Make sure you have the [GitHub CLI gh](https://cli.github.com/) is installed
+2. Copy `mk_release.sh` to somewhere in your PATH, just like you did with go-xbuild-go
+3. Set up your GitHub token:
+   * Get a GitHub token from _Profile image -> Settings -> Developer Settings_
+   * Click on _Personal access tokens_
+   * Select _Tokens (classic)_
+   * Select the Checkbox at the left side of _repo_
+   * Click on _Generate token_ at the bottom
+   * Export it: `export GITHUB_TOKEN=your_github_token`
+5. Update `VERSION` file if needed
+5. Run the release script from your project root:
 
-Look at VERSION file, use that as release tag.
-
-Then run:
-
+```bash
+   mk_release.sh "Your release notes here"
 ```
-cat VERSION
-v1.0.1
-export GITHUB_TOKEN=gihub_token
-gh release create v1.0.1 \
-       --notes 'my release note' \
-       'bin/*'
-gh release list
-```
-
+A Release and tag with content of VERSION file will be created
 
 ## Contributing
 Pull requests welcome! Please keep it simple.
