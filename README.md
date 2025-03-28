@@ -120,7 +120,7 @@ The following files will be included in archives if they exist:
 - LICENSE.txt
 - docs/project-name.1 (man page)
 
-## How to make a release
+## How to release your project to github
 
 Now that you cross-compiled and created archives for your go project, here is how
 I use [gh](https://cli.github.com/) cli to create releases and upload the assets
