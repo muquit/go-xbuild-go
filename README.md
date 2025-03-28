@@ -40,11 +40,14 @@ Install [Go](https://go.dev/) first
 go install github.com/muquit/go-xbuild-go@latest
 go-xbuild-go -version
 ```
+Download `platform.txt` file
 
 ## Download
 
 Download pre-compiled binaries from
 [Releases](https://github.com/muquit/go-xbuild-go/releases) page
+
+Download `platform.txt` file
 
 ## Building from source
 
