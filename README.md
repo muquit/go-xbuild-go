@@ -64,7 +64,7 @@ go build .
 - Edit platforms.txt to uncomment the platforms you want to build for.
 
 go programs can be cross compiled for more than 40 platforms. `go tool dist list` for the list
-supporeted by your version of go.
+supported by your version of go.
 
 A few lines of platforms.txt is shown below:
 ```text
