@@ -13,6 +13,12 @@ Hope you will find it useful and fun to use.
 
 This is a [go](https://go.dev/) port of my bash script https://github.com/muquit/go-xbuild
 
+## Configuration file
+There is no configuration file. 
+* Just copy `platforms.txt` at the root of your go project. Comment, Uncomment platforms you want
+to build for
+* Look at *How to release your project to github* section on how to release on github
+
 ## Features
 - Simple to use and maintain
 - Cross compile for multiple platforms
