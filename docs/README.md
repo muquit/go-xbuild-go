@@ -1,21 +1,3 @@
-## Table Of Contents
-  - [Introduction](#introduction)
-  - [Configuration file](#configuration-file)
-  - [Features](#features)
-  - [Options](#options)
-  - [Version](#version)
-  - [Quick Start](#quick-start)
-  - [Download](#download)
-  - [Building from source](#building-from-source)
-  - [How to use](#how-to-use)
-  - [Usage](#usage)
-  - [Output Structure](#output-structure)
-  - [Included Files](#included-files)
-  - [How to release your project to github](#how-to-release-your-project-to-github)
-  - [Contributing](#contributing)
-  - [License](#license)
-  - [Author](#author)
-
 ## Introduction
 
 A [go](https://go.dev/) program to cross compile 
@@ -187,6 +169,3 @@ MIT License - See LICENSE.txt file for details.
 
 ## Author
 Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
-
----
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Mar-29-2025</sub>
