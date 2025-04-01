@@ -1,5 +1,5 @@
 #====================================================================
-# Reqquires https://github.com/muquit/go-xbuild-go for cross compiling
+# Requires https://github.com/muquit/go-xbuild-go for cross compiling
 # for other platforms.
 # Mar-29-2025 muquit@muquit.com 
 #====================================================================
