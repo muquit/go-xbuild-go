@@ -181,7 +181,7 @@ Now that you cross-compiled and created archives for your go project, you can us
    mk_release.sh 
 ```
 A Release and tag with content of VERSION file will be created. The script
-run `gh` as follows:
+does some checking for github token etc and then  runs `gh` as follows:
 ```
 gh release create "${VERSION}" \
     --notes-file ./notes.md \
