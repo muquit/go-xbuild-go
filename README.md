@@ -52,12 +52,14 @@ to build for
 A program to cross compile go programs
   -help
     	Show help information and exit
+  -pi
+    	Build Raspberry Pi (default true)
   -version
     	Show version information and exit
 ```
 
 ## Version
-The current version is 1.0.1
+The current version is 1.0.2
 
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
@@ -189,4 +191,4 @@ MIT License - See LICENSE.txt file for details.
 Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Mar-29-2025</sub>
+<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Apr-02-2025</sub>

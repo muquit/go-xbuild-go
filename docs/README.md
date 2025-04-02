@@ -34,12 +34,14 @@ to build for
 A program to cross compile go programs
   -help
     	Show help information and exit
+  -pi
+    	Build Raspberry Pi (default true)
   -version
     	Show version information and exit
 ```
 
 ## Version
-The current version is 1.0.1
+The current version is 1.0.2
 
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 

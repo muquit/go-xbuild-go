@@ -4,18 +4,17 @@ package main
 // Cross compile go programs for other platforms
 // Developed with Claude AI 3.7 Sonnet, working under my guidance and
 // instructions.
-// muquit@muquit.com Mar-26-2025 
+// muquit@muquit.com Mar-26-2025
 /////////////////////////////////////////////////////////////////////
 
-
 import (
-	"flag"
 	"archive/tar"
 	"archive/zip"
 	"bufio"
 	"compress/gzip"
 	"crypto/sha256"
 	"encoding/hex"
+	"flag"
 	"fmt"
 	"io"
 	"io/fs"
@@ -26,9 +25,11 @@ import (
 )
 
 const (
-	version = "1.0.1"
-	url = "https://github.com/muquit/go-xbuild-go"
+	version = "1.0.2"
+	url     = "https://github.com/muquit/go-xbuild-go"
 )
+
+var buildForPi = true
 
 // Configuration constants
 type Config struct {
@@ -47,6 +48,7 @@ func main() {
 
 	flag.BoolVar(&showVersion, "version", false, "Show version information and exit")
 	flag.BoolVar(&showHelp, "help", false, "Show help information and exit")
+	flag.BoolVar(&buildForPi, "pi", true, "Build Raspberry Pi")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "%s v%s\n", os.Args[0], version)
@@ -55,13 +57,13 @@ func main() {
 	}
 	flag.Parse()
 
-    if showVersion {
-        fmt.Printf("%s v%s\n", os.Args[0], version)
-        os.Exit(0)
-    }
+	if showVersion {
+		fmt.Printf("%s v%s\n", os.Args[0], version)
+		os.Exit(0)
+	}
 
 	if showHelp {
-        fmt.Printf("%s v%s\n", os.Args[0], version)
+		fmt.Printf("%s v%s\n", os.Args[0], version)
 		fmt.Println("A program to cross compile go programs for various platforms\n")
 		fmt.Println("- Copy platforms.txt at the root of your project")
 		fmt.Println("- Edit platforms.txt to uncomment the platforms you want to build for")
@@ -69,7 +71,6 @@ func main() {
 		fmt.Println("- Then run go-xbuild-go\n")
 		os.Exit(0)
 	}
-
 
 	// Get current directory
 	myDir, err := os.Getwd()
@@ -125,12 +126,14 @@ func process(config *Config) error {
 		return err
 	}
 
-	// Build for Raspberry Pi variants
-	if err := buildPi(config, version, "", "7"); err != nil { // modern pi
-		return err
-	}
-	if err := buildPi(config, version, "-jessie", "6"); err != nil { // pi jessie
-		return err
+	if buildForPi {
+		// Build for Raspberry Pi variants
+		if err := buildPi(config, version, "", "7"); err != nil { // modern pi
+			return err
+		}
+		if err := buildPi(config, version, "-jessie", "6"); err != nil { // pi jessie
+			return err
+		}
 	}
 
 	fmt.Printf("Build complete. Artifacts are in %s\n", config.BinDir)
