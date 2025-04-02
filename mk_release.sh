@@ -9,7 +9,8 @@ usage() {
     echo "==========================================================="
     echo "A script to upload a project in github Releases page"
     echo "It uses github gh CLI create the release" 
-    echo "Usage: ${0} \"Release Notes\""
+    echo "Create markdown file notes.md in the current working directy"
+    echo "Usage: ${0} "
     echo " - github gh CLI must be in PATH"
     echo " - GITHUB_TOKEN env var must be set"
     echo " - VERSION file must exist"
@@ -53,17 +54,17 @@ if [[ -z "$(/bin/ls -A ./bin)" ]]; then
     usage
 fi
 
-if [[ $# -eq 0 ]]; then
-    echo "Error: Release notes must be provided"
-    echo "Usage: $0 \"Release notes here\""
+if [[ ! -f "notes.md" ]]; then
+    echo "Error: release notes file notes.md not found"
+    echo "Please create nots.md with your release notes"
+    echo ""
     usage
 fi
 
-RELEASE_NOTES="$1"
-
-echo "Creating release ${VERSION} with provided notes..."
+echo "Creating release ${VERSION} with provided notes in ./notes.md"
+pwd
 gh release create "${VERSION}" \
-    --notes "${RELEASE_NOTES}" \
+    --notes-file ./notes.md \
     './bin/*'
 
 gh release list
