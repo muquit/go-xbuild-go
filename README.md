@@ -31,6 +31,8 @@ Hope you will find it useful and fun to use.
 
 This is a [go](https://go.dev/) port of my bash script https://github.com/muquit/go-xbuild
 
+Pull requests, suggestions are always welcome.
+
 ## Configuration file
 There is no configuration file. 
 * Just copy `platforms.txt` at the root of your go project. Comment, Uncomment platforms you want
