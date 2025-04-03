@@ -168,7 +168,7 @@ A Release and tag with content of VERSION file will be created. The script
 does some checking for github token etc and then  runs `gh` as follows:
 ```
 gh release create "${VERSION}" \
-    --notes-file ./notes.md \
+    --notes-file path_release_notes.md \
     './bin/*'
 ```
 

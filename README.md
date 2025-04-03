@@ -186,7 +186,7 @@ A Release and tag with content of VERSION file will be created. The script
 does some checking for github token etc and then  runs `gh` as follows:
 ```
 gh release create "${VERSION}" \
-    --notes-file ./notes.md \
+    --notes-file path_release_notes.md \
     './bin/*'
 ```
 
@@ -200,4 +200,4 @@ MIT License - See LICENSE.txt file for details.
 Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Apr-02-2025</sub>
+<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Apr-03-2025</sub>
