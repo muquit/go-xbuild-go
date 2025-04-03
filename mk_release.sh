@@ -5,12 +5,13 @@
 # muquit@muquit.com Mar-27-2025 
 ########################################################################
 
+SCRIPT_VERSION="1.0.2"
 usage() {
     echo "==========================================================="
-    echo "A script to upload a project in github Releases page"
+    echo "A script to create a github Releases, v${SCRIPT_VERSION}"
     echo "It uses github gh CLI create the release" 
-    echo "Create markdown file notes.md in the current working directy"
-    echo "Usage: ${0} "
+    echo ""
+    echo "Usage: ${0} <release_notes.md>"
     echo " - github gh CLI must be in PATH"
     echo " - GITHUB_TOKEN env var must be set"
     echo " - VERSION file must exist"
@@ -19,6 +20,18 @@ usage() {
     echo ""
     exit 1
 }
+echo "$0 v${SCRIPT_VERSION}"
+
+RELEASE_NOTES_FILE="release_notes.md"
+if [[ $# -eq 1 ]]; then
+    RELEASE_NOTES_FILE=$1
+fi
+if [[ ! -f ${RELEASE_NOTES_FILE} ]]; then
+    echo "Error: Release notes file ${RELEASE_NOTES_FILE} does not exist"
+    echo ""
+    usage
+fi
+
 # check if github gh cli exists
 if ! command -v gh &> /dev/null; then
     echo "Error: GitHub CLI (gh) is not installed or not in PATH"
@@ -53,18 +66,10 @@ if [[ -z "$(/bin/ls -A ./bin)" ]]; then
     echo ""
     usage
 fi
-
-if [[ ! -f "notes.md" ]]; then
-    echo "Error: release notes file notes.md not found"
-    echo "Please create nots.md with your release notes"
-    echo ""
-    usage
-fi
-
-echo "Creating release ${VERSION} with provided notes in ./notes.md"
-pwd
+echo ""
+echo "Processing release notes from: ${RELEASE_NOTES_FILE}"
 gh release create "${VERSION}" \
-    --notes-file ./notes.md \
+    --notes-file ${RELEASE_NOTES_FILE} \
     './bin/*'
 
 gh release list
