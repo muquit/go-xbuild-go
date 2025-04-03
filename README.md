@@ -1,22 +1,23 @@
 ## Table Of Contents
-  - [Introduction](#introduction)
-  - [Configuration file](#configuration-file)
-  - [Features](#features)
-  - [Options](#options)
-  - [Version](#version)
-  - [Quick Start](#quick-start)
+- [Introduction](#introduction)
+- [Configuration file](#configuration-file)
+- [Features](#features)
+- [Options](#options)
+- [Version](#version)
+- [Installation](#installation)
+  - [Install from github](#install-from-github)
   - [Download](#download)
   - [Building from source](#building-from-source)
-  - [How to use](#how-to-use)
-  - [Usage](#usage)
-  - [Output Structure](#output-structure)
-  - [Included Files](#included-files)
-  - [How to release your project to github](#how-to-release-your-project-to-github)
-  - [Contributing](#contributing)
-  - [License](#license)
-  - [Author](#author)
+- [How to use](#how-to-use)
+- [Usage](#usage)
+- [Output Structure](#output-structure)
+- [Included Files](#included-files)
+- [How to release your project to github](#how-to-release-your-project-to-github)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
 
-## Introduction
+# Introduction
 
 A [go](https://go.dev/) program to cross compile 
 [go](https://go.dev/) projects without the complexity of [GoReleaser](https://goreleaser.com/).
@@ -33,13 +34,13 @@ This is a [go](https://go.dev/) port of my bash script https://github.com/muquit
 
 Pull requests, suggestions are always welcome.
 
-## Configuration file
+# Configuration file
 There is no configuration file. 
 * Just copy `platforms.txt` at the root of your go project. Comment, Uncomment platforms you want
 to build for
 * Look at *How to release your project to github* section on how to release on github
 
-## Features
+# Features
 - Simple to use and maintain
 - Cross compile for multiple platforms
 - Special handling for Raspberry Pi (modern and Jessie)
@@ -48,7 +49,7 @@ to build for
 - No complex configuration files
 - Just uncomment platforms in platforms.txt to build for them
 
-## Options
+# Options
 
 ```
 A program to cross compile go programs
@@ -60,13 +61,14 @@ A program to cross compile go programs
     	Show version information and exit
 ```
 
-## Version
+# Version
 The current version is 1.0.2
 
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
-## Quick Start
+# Installation
 
+## Install from github
 Install [go](https://go.dev/) first
 
 ```bash
@@ -96,7 +98,7 @@ cd go-xbuild-go
 go build .
 ```
 
-## How to use
+# How to use
 
 - Copy `go-xbuild-go` somewhere in your PATH. If you followed the step in *Quick Start*, it should
    be  already in your path.
@@ -126,7 +128,7 @@ linux/amd64
 ...
 ```
 
-## Usage
+# Usage
 Run go-xbuild-go from the root of your project.  Update VERSION file if needed.
 Then, compile the binaries:
 
@@ -142,7 +144,7 @@ The program will:
 5. Generate checksums for all archives
 6. Place all artifacts in _./bin_ directory
 
-## Output Structure
+# Output Structure
 ```
 bin/
 ├── project-v1.0.1-darwin-amd64.d.tar.gz
@@ -154,14 +156,14 @@ bin/
 └── project-v1.0.1-checksums.txt
 ```
 
-## Included Files
+# Included Files
 The following files will be included in archives if they exist:
 - Compiled binary
 - README.md
 - LICENSE.txt
 - docs/project-name.1 (man page)
 
-## How to release your project to github
+# How to release your project to github
 
 Now that you cross-compiled and created archives for your go project, you can use the included release script to publish to GitHub:
 
@@ -190,13 +192,13 @@ gh release create "${VERSION}" \
     './bin/*'
 ```
 
-## Contributing
+# Contributing
 Pull requests welcome! Please keep it simple.
 
-## License
+# License
 MIT License - See LICENSE.txt file for details.
 
-## Author
+# Author
 Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
 
 ---
