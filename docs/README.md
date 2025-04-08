@@ -187,7 +187,7 @@ By default, it looks file `release_notes.md` in the current working directory.
 Pull requests welcome! Please keep it simple.
 
 ## License
-MIT License - See LICENSE file for details.
+MIT License - See LICENSE.txt file for details.
 
 ## Author
 Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
