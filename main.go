@@ -232,6 +232,7 @@ func copyFiles(config *Config, bin, distDir string) error {
 		filepath.Join(filepath.Dir(config.BinDir), "README.md"):                     filepath.Join(distDir, "README.md"),
 		filepath.Join(filepath.Dir(config.BinDir), "docs", config.ProjectName+".1"): filepath.Join(distDir, config.ProjectName+".1"),
 		filepath.Join(filepath.Dir(config.BinDir), "LICENSE.txt"):                   filepath.Join(distDir, "LICENSE.txt"),
+		filepath.Join(filepath.Dir(config.BinDir), "platforms.txt"):                 filepath.Join(distDir, "platforms.txt"),
 	}
 
 	for src, dst := range docFiles {

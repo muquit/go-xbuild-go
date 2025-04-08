@@ -14,9 +14,10 @@ build:
 	@echo "*** Compiling ..."
 	go build -o $(BINARY)
 
-build_all:
+build_all: build
+	@/bin/rm -rf ./bin
 	@echo "*** Cross Compiling ...."
-	go-xbuild-go
+	$(BINARY)
 
 doc:
 	@echo "*** Generating README.md with TOC ..."
