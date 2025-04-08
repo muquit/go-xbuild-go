@@ -166,7 +166,7 @@ Now that you cross-compiled and created archives for your go project, you can us
    * Click on _Generate token_ at the bottom
    * Save the token securely
    * Export it: `export GITHUB_TOKEN=your_github_token`
-   * Create a release notes file `notes.md` at the root of your project
+   * Create a release notes file `relese_notes.md` at the root of your project
 5. Update `VERSION` file if needed
 5. Run the release script from your project root:
 
