@@ -106,9 +106,8 @@ Please look at [ChangeLog](ChangeLog.md) for what has changed in the current ver
 Download pre-compiled binaries from
 [Releases](https://github.com/muquit/go-xbuild-go/releases) page
 
-* `platforms.txt` file must be copied to your pojrect's root
-* You can create it with `go tool dist list` if you want and comment out
-platforms yo do not want
+Please look at [How to use](#how-to-use) 
+
 
 ### Building from source
 
@@ -119,6 +118,7 @@ git clone https://github.com/muquit/go-xbuild-go
 cd go-xbuild-go
 go build .
 ```
+Please look at [How to use](#how-to-use) 
 
 
 ## Usage
@@ -198,4 +198,4 @@ MIT License - See LICENSE.txt file for details.
 Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Apr-08-2025</sub>
+<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Apr-09-2025</sub>

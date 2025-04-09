@@ -89,9 +89,8 @@ Please look at [ChangeLog](ChangeLog.md) for what has changed in the current ver
 Download pre-compiled binaries from
 [Releases](https://github.com/muquit/go-xbuild-go/releases) page
 
-* `platforms.txt` file must be copied to your pojrect's root
-* You can create it with `go tool dist list` if you want and comment out
-platforms yo do not want
+Please look at [How to use](#how-to-use) 
+
 
 ### Building from source
 
@@ -102,6 +101,7 @@ git clone https://github.com/muquit/go-xbuild-go
 cd go-xbuild-go
 go build .
 ```
+Please look at [How to use](#how-to-use) 
 
 
 ## Usage
