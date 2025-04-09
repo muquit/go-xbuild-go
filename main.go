@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -45,14 +46,30 @@ type Config struct {
 func main() {
 	var showVersion bool
 	var showHelp bool
+	var makeRelease bool
+	var releaseNote string
+	var releaseNoteFile string
 
 	flag.BoolVar(&showVersion, "version", false, "Show version information and exit")
 	flag.BoolVar(&showHelp, "help", false, "Show help information and exit")
 	flag.BoolVar(&buildForPi, "pi", true, "Build Raspberry Pi")
 
+	flag.BoolVar(&makeRelease, "release", false, "Create a GitHub release")
+	flag.StringVar(&releaseNote, "release-note", "", "Release note text (required if -release-note-file not specified and release_notes.md doesn't exist)")
+	flag.StringVar(&releaseNoteFile, "release-note-file", "", "File containing release notes (required if -release-note not specified and release_notes.md doesn't exist)")
+
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "%s v%s\n", os.Args[0], version)
-		fmt.Fprintf(os.Stderr, "A program to cross compile go programs\n")
+		fmt.Fprintf(os.Stderr, "A program to cross compile go programs\n\n")
+		fmt.Fprintf(os.Stderr, "Environment variables:\n")
+		fmt.Fprintf(os.Stderr, "  GITHUB_TOKEN     GitHub API token (required for -release)\n")
+		fmt.Fprintf(os.Stderr, "  GH_CLI_PATH      Custom path to GitHub CLI executable (optional)\n\n")
+		fmt.Fprintf(os.Stderr, "Usage:\n")
+		fmt.Fprintf(os.Stderr, "  - Copy platforms.txt at the root of your project\n")
+		fmt.Fprintf(os.Stderr, "  - Edit platforms.txt to uncomment the platforms you want to build for\n")
+		fmt.Fprintf(os.Stderr, "  - Create a VERSION file with your version (e.g. v1.0.1)\n")
+		fmt.Fprintf(os.Stderr, "  - Then run %s\n\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Options:\n")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
@@ -96,6 +113,167 @@ func main() {
 	if err != nil {
 		fail(err.Error())
 	}
+
+	if makeRelease {
+		err = createRelease(&config, releaseNote, releaseNoteFile)
+		if err != nil {
+			fail(err.Error())
+		}
+	}
+
+}
+
+// Create a GitHub release
+// Create a GitHub release
+func createRelease(config *Config, note, noteFile string) error {
+	// Check if GitHub CLI exists
+	if err := checkGhCliExists(); err != nil {
+		return err
+	}
+
+	// Check if GITHUB_TOKEN is set
+	if os.Getenv("GITHUB_TOKEN") == "" {
+		return fmt.Errorf("GITHUB_TOKEN environment variable is not set")
+	}
+
+	// Get version
+	version, err := getVersion(config)
+	if err != nil {
+		return err
+	}
+
+	// Check if bin directory exists and is not empty
+	if _, err := os.Stat(config.BinDir); os.IsNotExist(err) {
+		return fmt.Errorf("bin directory does not exist")
+	}
+
+	// Check if bin directory has files
+	files, err := os.ReadDir(config.BinDir)
+	if err != nil {
+		return fmt.Errorf("failed to read bin directory: %v", err)
+	}
+	if len(files) == 0 {
+		return fmt.Errorf("bin directory is empty")
+	}
+
+	// Get the appropriate gh command
+	ghCmd := getGhCommand()
+
+	// Prepare the command arguments
+	args := []string{
+		"release",
+		"create",
+		version,
+	}
+
+	// Handle release notes
+	if note != "" && noteFile != "" {
+		// Create a temporary file for combined notes
+		tempFile, err := os.CreateTemp("", "release-notes-*.md")
+		if err != nil {
+			return fmt.Errorf("failed to create temporary file for release notes: %v", err)
+		}
+		defer os.Remove(tempFile.Name())
+
+		// Write the inline note
+		if _, err := tempFile.WriteString(note + "\n\n"); err != nil {
+			tempFile.Close()
+			return fmt.Errorf("failed to write inline note to temporary file: %v", err)
+		}
+
+		// Append the file content
+		fileContent, err := os.ReadFile(noteFile)
+		if err != nil {
+			tempFile.Close()
+			return fmt.Errorf("failed to read release note file: %v", err)
+		}
+
+		if _, err := tempFile.Write(fileContent); err != nil {
+			tempFile.Close()
+			return fmt.Errorf("failed to write file content to temporary file: %v", err)
+		}
+
+		tempFile.Close()
+		args = append(args, "--notes-file", tempFile.Name())
+	} else if note != "" {
+		// Use the --notes flag directly
+		args = append(args, "--notes", note)
+	} else if noteFile != "" {
+		// Check if file exists
+		if _, err := os.Stat(noteFile); os.IsNotExist(err) {
+			return fmt.Errorf("release note file does not exist: %s", noteFile)
+		}
+		args = append(args, "--notes-file", noteFile)
+	} else {
+		// Check if default release notes file exists
+		defaultNoteFile := "release_notes.md"
+		if _, err := os.Stat(defaultNoteFile); os.IsNotExist(err) {
+			return fmt.Errorf("no release notes specified and default file '%s' does not exist", defaultNoteFile)
+		}
+		args = append(args, "--notes-file", defaultNoteFile)
+	}
+
+	// Add all files from bin directory
+	args = append(args, filepath.Join(config.BinDir, "*"))
+
+	// Execute gh release create command
+	fmt.Printf("Creating GitHub release %s\n", version)
+	cmd := exec.Command(ghCmd, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to create GitHub release: %v", err)
+	}
+
+	// List releases
+	listCmd := exec.Command(ghCmd, "release", "list")
+	listCmd.Stdout = os.Stdout
+	listCmd.Stderr = os.Stderr
+
+	if err := listCmd.Run(); err != nil {
+		return fmt.Errorf("failed to list GitHub releases: %v", err)
+	}
+
+	fmt.Printf("GitHub release %s created successfully\n", version)
+	return nil
+}
+
+// Get the GitHub CLI command with precedence:
+// 1. Environment variable (if set)
+// 2. Platform-specific executable name
+// 3. Default "gh" command
+func getGhCommand() string {
+	// Check environment variable first
+	if envCmd := os.Getenv("GH_CLI_PATH"); envCmd != "" {
+		// Verify the specified path exists and is executable
+		if _, err := os.Stat(envCmd); err == nil {
+			return envCmd
+		}
+		// If env var is set but invalid, print a warning
+		fmt.Fprintf(os.Stderr, "Warning: GH_CLI_PATH environment variable is set to '%s' but file doesn't exist or isn't executable\n", envCmd)
+	}
+
+	// Platform-specific checks
+	if runtime.GOOS == "windows" {
+		if _, err := exec.LookPath("gh.exe"); err == nil {
+			return "gh.exe"
+		}
+	}
+
+	// Default to "gh"
+	return "gh"
+}
+
+// Check if GitHub CLI exists (using all possible methods)
+func checkGhCliExists() error {
+	cmd := getGhCommand()
+
+	if _, err := exec.LookPath(cmd); err != nil {
+		return fmt.Errorf("GitHub CLI (%s) is not installed or not in PATH", cmd)
+	}
+
+	return nil
 }
 
 // Process handles the main build process
