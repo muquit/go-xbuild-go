@@ -5,7 +5,6 @@
   - [Options](#options)
   - [Version](#version)
   - [Installation](#installation)
-    - [From github directly](#from-github-directly)
     - [Download](#download)
     - [Building from source](#building-from-source)
   - [Usage](#usage)
@@ -101,18 +100,6 @@ The current version is 1.0.3
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
 ## Installation
-
-### From github directly
-
-Install [go](https://go.dev/) first
-
-```bash
-go install github.com/muquit/go-xbuild-go@latest
-go-xbuild-go -version
-```
-* Note: you have to download `platforms.txt` file. It must be copied to your pojrect's root
-* You can create it with `go tool dist list` if you want and comment out
-platforms yo do not want
 
 ### Download
 
