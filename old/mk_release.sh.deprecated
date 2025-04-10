@@ -1,9 +1,13 @@
 #!/bin/bash
 
+## @Deprecated. use go-xbuild-go instead.
+
 ########################################################################
 # Make a release to github using gh CLI 
 # muquit@muquit.com Mar-27-2025 
 ########################################################################
+
+# This script is deprecated. Now go-xbuild-go can be used to make a release.
 
 SCRIPT_VERSION="1.0.2"
 usage() {

@@ -25,6 +25,16 @@ doc:
 	$(GEN_TOC_PROG) -i $(README_ORIG) -o $(README) -f
 	chmod 444 $(README)
 
+# make sure:
+#  - to run: make clean
+#  - to run: make doc
+#  - to check VERSION file
+#  - run 'make build_all' before release
+#  - release_notes.md exists in cwd
+release:
+	@echo "*** Releasing on github ..."
+	$(BINARY) -release
+
 clean:
 	/bin/rm -f $(BINARY)
 	/bin/rm -rf ./bin

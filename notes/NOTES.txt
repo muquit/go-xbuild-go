@@ -1,0 +1,15 @@
+Note to myself. 
+
+Before making a release
+
+make sure:
+  - to run: make clean
+  - to run: make doc
+  - to check VERSION file
+  - run 'make build_all' 
+  - Test. Check if archives have all intended files
+  - release_notes.md exists in cwd
+  - Then run 'make release'
+  - git pull
+
+- Apr-09-2025 

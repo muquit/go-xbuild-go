@@ -1,7 +1,13 @@
 ## Introduction
 
-A [go](https://go.dev/) program to cross compile 
+A [go](https://go.dev/) multi-platform program to cross compile 
 [go](https://go.dev/) projects without the complexity of [GoReleaser](https://goreleaser.com/).
+The program can be used to:
+
+- Cross compile go projects for various platforms - with ease
+- Make releases to github - with ease
+
+## Background and Motivation
 
 It was written from the frustration of using [GoReleaser](https://goreleaser.com/). I don't 
 release often, whenever the time comes to release using GoReleaser, 
@@ -21,7 +27,7 @@ Pull requests, suggestions are always welcome.
 There is no configuration file to edit.
 
 - Copy `go-xbuild-go` somewhere in your PATH. 
-- Copy `platforms.txt` to your go project's root directory or the directory where you build your project from
+- Copy `platforms.txt` to your go project's root directory or to the directory where you build your project from
 - Create a `VERSION` file with your version (e.g., v1.0.1) at the root of your
 project or where you build the project from
 - Edit `platforms.txt` to uncomment the platforms you want to build for.
@@ -64,21 +70,42 @@ linux/amd64
 - Creates archives (ZIP for Windows, tar.gz for others)
 - No complex configuration files
 - Just uncomment platforms in platforms.txt to build for them
+- Make release of the project to github
 
-## Options
+## Synopsis
 
 ```
 A program to cross compile go programs
+
+Environment variables (for github release):
+  GITHUB_TOKEN     GitHub API token (required for -release)
+  GH_CLI_PATH      Custom path to GitHub CLI executable (optional)
+
+Usage:
+  - Copy platforms.txt at the root of your project
+  - Edit platforms.txt to uncomment the platforms you want to build for
+  - Create a VERSION file with your version (e.g. v1.0.1)
+  - Then run ./go-xbuild-go
+
+Options:
+  -additional-files string
+    	Comma-separated list of additional files to include in archives
   -help
     	Show help information and exit
   -pi
     	Build Raspberry Pi (default true)
+  -release
+    	Create a GitHub release
+  -release-note string
+    	Release note text (required if -release-note-file not specified and release_notes.md doesn't exist)
+  -release-note-file string
+    	File containing release notes (required if -release-note not specified and release_notes.md doesn't exist)
   -version
     	Show version information and exit
 ```
 
 ## Version
-The current version is 1.0.3
+The current version is 1.0.4
 
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
@@ -144,30 +171,58 @@ The following files will be included in archives if they exist:
 
 Now that you cross-compiled and created archives for your go project, you can use the included release script to publish to GitHub:
 
-1. Make sure you have the GitHub CLI [gh](https://cli.github.com/) is installed
-2. Copy `mk_release.sh` to somewhere in your PATH, just like you did with `go-xbuild-go`
-3. Set up your GitHub token:
-   * Get a GitHub token from _Profile image -> Settings -> Developer Settings_
-   * Click on _Personal access tokens_
-   * Select _Tokens (classic)_
-   * Select the Checkbox at the left side of _repo_
-   * Click on _Generate token_ at the bottom
-   * Save the token securely
-   * Export it: `export GITHUB_TOKEN=your_github_token`
-   * Create a release notes file `relese_notes.md` at the root of your project
-5. Update `VERSION` file if needed
-5. Run the release script from your project root:
+1. Make sure you have the GitHub CLI [gh](https://cli.github.com/) is installed. By default, the path will be
+searched to find it. However, the environment variable **GH_CLI_PATH** can be
+seto specify an alternate path.
 
-```bash
-   mk_release.sh 
+2. Set up your GitHub token:
+   * Get a GitHub token from _Profile image -> Settings -> Developer Settings_
+
+   * Click on _Personal access tokens_
+
+   * Select _Tokens (classic)_
+
+   * Select the Checkbox at the left side of _repo_
+
+   * Click on _Generate token_ at the bottom
+
+   * Save the token securely
+
+   * Export it: **export GITHUB_TOKEN=your_github_token**
+
+   * Create a release notes file `release_notes.md` at the root of your
+   project. The options `-release-note` or `-release-notes-file` can be used
+   to specify the release notes.
+3. Update `VERSION` file if needed. The Release and tag with the content 
+of VERSION file will be created.
+
+Now Run:
+
 ```
-A Release and tag with content of VERSION file will be created. The script
-does some checking for github token etc and then  runs `gh` as follows:
+go-xbuild-go \
+        -release \
+        -release-note "Release v1.0.1"
 ```
-gh release create "${VERSION}" \
-    --notes-file ./release_notes.md \
-    './bin/*'
+or
 ```
+go-xbuild-go \
+        -release \
+        -release-note-file "release_notes.md"
+```
+or
+```
+go-xbuild-go \
+        -release \
+        -release-note "Release v1.0.x" \
+        -release-note-file "release_notes.md"
+
+```
+or if `release_notes.md` exists in the current working directory:
+```
+go-xbuild-go -release
+```
+
+
 
 By default, it looks file `release_notes.md` in the current working directory. 
 
@@ -175,7 +230,7 @@ By default, it looks file `release_notes.md` in the current working directory.
 Pull requests welcome! Please keep it simple.
 
 ## License
-MIT License - See LICENSE.txt file for details.
+MIT License - See LICENSE file for details.
 
 ## Author
 Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.

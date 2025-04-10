@@ -5,6 +5,7 @@ package main
 // Developed with Claude AI 3.7 Sonnet, working under my guidance and
 // instructions.
 // muquit@muquit.com Mar-26-2025
+/// v1.0.4 - Apr-09-2025 
 /////////////////////////////////////////////////////////////////////
 
 import (
@@ -26,7 +27,7 @@ import (
 )
 
 const (
-	version = "1.0.2"
+	version = "1.0.4"
 	url     = "https://github.com/muquit/go-xbuild-go"
 )
 
@@ -41,6 +42,7 @@ type Config struct {
 	ChecksumsFile string
 	LdFlags       string
 	BuildFlags    string
+	AdditionalFiles []string 
 }
 
 func main() {
@@ -49,6 +51,7 @@ func main() {
 	var makeRelease bool
 	var releaseNote string
 	var releaseNoteFile string
+	var additionalFiles string
 
 	flag.BoolVar(&showVersion, "version", false, "Show version information and exit")
 	flag.BoolVar(&showHelp, "help", false, "Show help information and exit")
@@ -57,11 +60,12 @@ func main() {
 	flag.BoolVar(&makeRelease, "release", false, "Create a GitHub release")
 	flag.StringVar(&releaseNote, "release-note", "", "Release note text (required if -release-note-file not specified and release_notes.md doesn't exist)")
 	flag.StringVar(&releaseNoteFile, "release-note-file", "", "File containing release notes (required if -release-note not specified and release_notes.md doesn't exist)")
+	flag.StringVar(&additionalFiles, "additional-files", "", "Comma-separated list of additional files to include in archives")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "%s v%s\n", os.Args[0], version)
 		fmt.Fprintf(os.Stderr, "A program to cross compile go programs\n\n")
-		fmt.Fprintf(os.Stderr, "Environment variables:\n")
+		fmt.Fprintf(os.Stderr, "Environment variables (for github release):\n")
 		fmt.Fprintf(os.Stderr, "  GITHUB_TOKEN     GitHub API token (required for -release)\n")
 		fmt.Fprintf(os.Stderr, "  GH_CLI_PATH      Custom path to GitHub CLI executable (optional)\n\n")
 		fmt.Fprintf(os.Stderr, "Usage:\n")
@@ -81,11 +85,11 @@ func main() {
 
 	if showHelp {
 		fmt.Printf("%s v%s\n", os.Args[0], version)
-		fmt.Println("A program to cross compile go programs for various platforms\n")
+		fmt.Println("A program to cross compile go programs for various platforms")
 		fmt.Println("- Copy platforms.txt at the root of your project")
 		fmt.Println("- Edit platforms.txt to uncomment the platforms you want to build for")
 		fmt.Println("- Create a VERSION file with your version (e.g. v1.0.1)")
-		fmt.Println("- Then run go-xbuild-go\n")
+		fmt.Println("- Then run go-xbuild-go")
 		os.Exit(0)
 	}
 
@@ -106,21 +110,29 @@ func main() {
 		BuildFlags:    "-trimpath",
 	}
 
-	fmt.Printf("Building project: %s\n", config.ProjectName)
-
-	// Run the main process
-	err = process(&config)
-	if err != nil {
-		fail(err.Error())
+	if additionalFiles != "" {
+		config.AdditionalFiles = strings.Split(additionalFiles, ",")
+		// Trim spaces from each file path
+		for i, file := range config.AdditionalFiles {
+			config.AdditionalFiles[i] = strings.TrimSpace(file)
+		}
 	}
 
+	// ./bin must have the archives
 	if makeRelease {
 		err = createRelease(&config, releaseNote, releaseNoteFile)
 		if err != nil {
 			fail(err.Error())
 		}
+		os.Exit(0)
 	}
 
+	// otherise, run the main process
+	fmt.Printf("Building project: %s\n", config.ProjectName)
+	err = process(&config)
+	if err != nil {
+		fail(err.Error())
+	}
 }
 
 // Create a GitHub release
@@ -410,6 +422,7 @@ func copyFiles(config *Config, bin, distDir string) error {
 		filepath.Join(filepath.Dir(config.BinDir), "README.md"):                     filepath.Join(distDir, "README.md"),
 		filepath.Join(filepath.Dir(config.BinDir), "docs", config.ProjectName+".1"): filepath.Join(distDir, config.ProjectName+".1"),
 		filepath.Join(filepath.Dir(config.BinDir), "LICENSE.txt"):                   filepath.Join(distDir, "LICENSE.txt"),
+		filepath.Join(filepath.Dir(config.BinDir), "LICENSE"):                       filepath.Join(distDir, "LICENSE"),
 		filepath.Join(filepath.Dir(config.BinDir), "platforms.txt"):                 filepath.Join(distDir, "platforms.txt"),
 	}
 
@@ -420,6 +433,19 @@ func copyFiles(config *Config, bin, distDir string) error {
 			}
 		}
 	}
+
+    // Copy additional files if specified
+    for _, filePath := range config.AdditionalFiles {
+        if _, err := os.Stat(filePath); err == nil {
+            destPath := filepath.Join(distDir, filepath.Base(filePath))
+            if err := copyFile(filePath, destPath); err != nil {
+                return fmt.Errorf("failed to copy additional file %s: %v", filePath, err)
+            }
+            fmt.Printf("Added additional file: %s\n", filePath)
+        } else {
+            fmt.Printf("Warning: additional file not found: %s\n", filePath)
+        }
+    }
 
 	return nil
 }
