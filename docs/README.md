@@ -166,6 +166,7 @@ The following files will be included in archives if they exist:
 - LICENSE.txt
 - docs/project-name.1 (man page)
 - platforms.txt
+- Add extra files with `-additional-files`
 
 ## How to release your project to github
 
