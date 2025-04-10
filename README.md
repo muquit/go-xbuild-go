@@ -18,7 +18,7 @@
 
 ## Introduction
 
-A [go](https://go.dev/) multi-platform program to cross compile 
+A multi-platform program to cross compile 
 [go](https://go.dev/) projects without the complexity of [GoReleaser](https://goreleaser.com/).
 The program can be used to:
 
