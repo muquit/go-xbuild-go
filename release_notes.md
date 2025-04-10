@@ -1,1 +1,3 @@
-Please look at [ChangeLog](ChangeLog.md) for details on what has changed in the current version. The binaries are cross-compiled with https://github.com/muquit/go-xbuild-go
+Please look at [ChangeLog](ChangeLog.md) for details on what has changed in the current version. The binaries are cross-compiled with https://github.com/muquit/go-xbuild-go.  Do not forget to checkum of the archives before using.
+
+Thanks.
