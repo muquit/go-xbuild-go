@@ -23,7 +23,9 @@ A multi-platform program to cross compile
 The program can be used to:
 
 - Cross compile go projects for various platforms - with ease
-- Make releases to github - with ease
+- Make releases to github - with ease. Not just go projects, sny project can be released to github,
+just copy assets to `./bin` directory. Please look at Look at [How to release
+your project to github](#how-to-release-your-project-to-github) for details.
 
 ## Background and Motivation
 
@@ -255,4 +257,4 @@ MIT License - See LICENSE file for details.
 Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Apr-09-2025</sub>
+<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Apr-12-2025</sub>
