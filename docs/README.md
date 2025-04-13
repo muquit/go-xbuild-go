@@ -5,8 +5,8 @@ A multi-platform program to cross compile
 The program can be used to:
 
 - Cross compile go projects for various platforms - with ease
-- Make releases to github - with ease. Not just go projects, sny project can be released to github,
-just copy assets to `./bin` directory. Please look at Look at [How to release
+- Make releases to github - with ease. Not just go projects, any project can be released to github,
+just copy the assets to `./bin` directory. Please look at Look at [How to release
 your project to github](#how-to-release-your-project-to-github) for details.
 
 ## Background and Motivation
