@@ -191,7 +191,10 @@ The following files will be included in archives if they exist:
 
 ## How to release your project to github
 
-Now that you cross-compiled and created archives for your go project, you can use the included release script to publish to GitHub:
+Now that you cross-compiled and created archives for your go project, you 
+can use go-xbuild-go to publish it to GitHub.  Note: any project can be 
+released to github using this tool, not just go
+projects.
 
 1. Make sure you have the GitHub CLI [gh](https://cli.github.com/) is installed. By default, the path will be
 searched to find it. However, the environment variable **GH_CLI_PATH** can be
