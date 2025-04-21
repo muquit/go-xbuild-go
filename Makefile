@@ -22,7 +22,7 @@ build_all: build
 doc:
 	@echo "*** Generating README.md with TOC ..."
 	chmod 600 $(README)
-	$(GEN_TOC_PROG) -i $(README_ORIG) -o $(README) -f
+	$(GEN_TOC_PROG) -i $(README_ORIG) -o $(README) -pre-toc-file docs/badges.md -f
 	chmod 444 $(README)
 
 # make sure:

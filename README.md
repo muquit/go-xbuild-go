@@ -1,3 +1,4 @@
+[![Downloads](https://img.shields.io/github/downloads/muquit/go-xbuild-go/total.svg)](https://github.com/muquit/go-build-go/releases)
 ## Table Of Contents
   - [Introduction](#introduction)
   - [Background and Motivation](#background-and-motivation)
@@ -257,4 +258,4 @@ MIT License - See LICENSE file for details.
 Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Apr-12-2025</sub>
+<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Apr-20-2025</sub>
