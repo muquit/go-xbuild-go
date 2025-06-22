@@ -14,8 +14,6 @@
     - [Multi-binary mode](#multi-binary-mode)
   - [Multi-Binary Configuration](#multi-binary-configuration)
   - [Output Structure](#output-structure)
-    - [Legacy mode:](#legacy-mode)
-    - [Multi-binary mode:](#multi-binary-mode)
   - [Included Files](#included-files)
   - [How to release your project to github](#how-to-release-your-project-to-github)
   - [Contributing](#contributing)
@@ -298,7 +296,6 @@ For a complete working example, see: [go-multi-main-example](https://github.com/
 
 ## Output Structure
 
-### Legacy mode:
 ```
 bin/
 ├── project-v1.0.1-darwin-amd64.d.tar.gz
@@ -308,18 +305,6 @@ bin/
 ├── project-v1.0.1-raspberry-pi.d.tar.gz
 ├── project-v1.0.1-raspberry-pi-jessie.d.tar.gz
 └── project-v1.0.1-checksums.txt
-```
-
-### Multi-binary mode:
-```
-bin/
-├── mycli-v1.0.1-darwin-amd64.d.tar.gz
-├── mycli-v1.0.1-linux-amd64.d.tar.gz
-├── myserver-v1.0.1-darwin-amd64.d.tar.gz
-├── myserver-v1.0.1-linux-amd64.d.tar.gz
-├── admin-v1.0.1-darwin-amd64.d.tar.gz
-├── admin-v1.0.1-linux-amd64.d.tar.gz
-└── myproject-v1.0.1-checksums.txt
 ```
 
 ## Included Files
