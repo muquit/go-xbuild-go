@@ -12,6 +12,9 @@
 **Migration**: Existing projects work unchanged. To use multi-binary features, create a `build-config.json` file (see documentation for examples).
 - **Multi-target configuration system**: New `-config` flag accepts JSON configuration file for building multiple binaries from a single project
   - Example: `go-xbuild-go -config build-config.json`
+Please look at
+[go-multi-main-example](https://github.com/muquit/go-multi-main-example) for
+an example
 - **Multiple main package support**: Can now build projects with `cmd/cli/main.go`, `cmd/server/main.go`, etc. structure
 - **Flexible build paths**: Each target can specify custom build path like `./cmd/cli` or `./cmd/server`
 - **Per-target customization**:
