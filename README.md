@@ -230,7 +230,7 @@ go-xbuild-go -config build-config.json -list-targets
 go-xbuild-go -config build-config.json
 
 # Create GitHub release
-go-xbuild-go -config build-config.json -release -release-note "Multi-binary release"
+go-xbuild-go -release -release-note "Multi-binary release"
 ```
 
 ## Multi-Binary Configuration
@@ -340,7 +340,7 @@ projects.
 
 1. Make sure you have the GitHub CLI [gh](https://cli.github.com/) is installed. By default, the path will be
 searched to find it. However, the environment variable **GH_CLI_PATH** can be
-seto specify an alternate path.
+set to  specify an alternate path.
 
 2. Set up your GitHub token:
    * Get a GitHub token from _Profile image -> Settings -> Developer Settings_
@@ -365,40 +365,14 @@ of VERSION file will be created.
 
 Now Run:
 
-**Legacy mode:**
 ```
 go-xbuild-go \
         -release \
         -release-note "Release v1.0.1"
 ```
 
-**Multi-binary mode:**
 ```
-go-xbuild-go \
-        -config build-config.json \
-        -release \
-        -release-note "Multi-binary release v1.0.1"
-```
-
-Other release options work the same:
-```
-go-xbuild-go \
-        -config build-config.json \
-        -release \
-        -release-note-file "release_notes.md"
-```
-or
-```
-go-xbuild-go \
-        -config build-config.json \
-        -release \
-        -release-note "Release v1.0.x" \
-        -release-note-file "release_notes.md"
-
-```
-or if `release_notes.md` exists in the current working directory:
-```
-go-xbuild-go -config build-config.json -release
+go-xbuild-go -release
 ```
 
 By default, it looks file `release_notes.md` in the current working directory. 
