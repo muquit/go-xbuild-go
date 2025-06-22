@@ -270,7 +270,7 @@ myproject/
 └── README.md
 ```
 
-For a complete working example, see: [go-multi-main-example](https://github.com/example/go-multi-main-example)
+For a complete working example, see: [go-multi-main-example](https://github.com/muquit/go-multi-main-example)
 
 ## Output Structure
 
