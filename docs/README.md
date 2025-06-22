@@ -374,7 +374,7 @@ go-xbuild-go \
 ```
 or if `release_notes.md` exists in the current working directory:
 ```
-go-xbuild-go -config build-config.json -release
+go-xbuild-go -release
 ```
 
 By default, it looks file `release_notes.md` in the current working directory. 
