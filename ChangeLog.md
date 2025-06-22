@@ -29,7 +29,7 @@ an example
 
 Modern Go projects using the standard `cmd/` directory layout can now build all components (CLI tools, servers, admin utilities) in one unified cross-platform build process.
 
-(May-21-2025)
+(Jun-22-2025)
 
 # v1.0.4
 github release can be made the CLI itself. Before a script `mk_release.sh` was used.
