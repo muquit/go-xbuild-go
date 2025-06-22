@@ -10,7 +10,12 @@
     - [Download](#download)
     - [Building from source](#building-from-source)
   - [Usage](#usage)
+    - [Legacy mode (single binary)](#legacy-mode-single-binary)
+    - [Multi-binary mode](#multi-binary-mode)
+  - [Multi-Binary Configuration](#multi-binary-configuration)
   - [Output Structure](#output-structure)
+    - [Legacy mode:](#legacy-mode)
+    - [Multi-binary mode:](#multi-binary-mode)
   - [Included Files](#included-files)
   - [How to release your project to github](#how-to-release-your-project-to-github)
   - [Contributing](#contributing)
@@ -24,6 +29,7 @@ A multi-platform program to cross compile
 The program can be used to:
 
 - Cross compile go projects for various platforms - with ease
+- **Build multi-binary Go projects** - handle projects with multiple main packages like `cmd/cli/`, `cmd/server/`, etc.
 - Make releases to github - with ease. Not just go projects, **any project** can be released to github,
 just copy the assets to `./bin` directory. Please look at Look at [How to release
 your project to github](#how-to-release-your-project-to-github) for details.
@@ -45,19 +51,19 @@ Pull requests, suggestions are always welcome.
 
 ## How to use
 
-There is no configuration file to edit.
+There are two ways to use go-xbuild-go:
 
-- Copy `go-xbuild-go` somewhere in your PATH. 
-- Copy `platforms.txt` to your go project's root directory or to the directory where you build your project from
-- Create a `VERSION` file with your version (e.g., v1.0.1) at the root of your
-project or where you build the project from
-- Edit `platforms.txt` to uncomment the platforms you want to build for.
+**For simple projects (legacy mode):**
+- Copy `go-xbuild-go` somewhere in your PATH
+- Copy `platforms.txt` to your go project's root directory
+- Create a `VERSION` file with your version (e.g., v1.0.1)
+- Edit `platforms.txt` to uncomment the platforms you want to build for
+- Run: `go-xbuild-go`
 
-Then type:
-```
-go-build-go
-```
-tgz or zip archive will be created inside `./bin` directory
+**For complex projects with multiple binaries (new in v1.0.5):**
+- Copy `go-xbuild-go` somewhere in your PATH
+- Create a `build-config.json` file (see [Multi-Binary Configuration](#multi-binary-configuration))
+- Run: `go-xbuild-go -config build-config.json`
 
 Look at [How to release your project to github](#how-to-release-your-project-to-github)
 
@@ -86,16 +92,22 @@ linux/amd64
 ## Features
 - Simple to use and maintain
 - Cross compile for multiple platforms
+- **NEW in v1.0.5**: Multi-binary project support with JSON configuration
+- **NEW in v1.0.5**: Build multiple main packages from `cmd/` directory structure
+- **NEW in v1.0.5**: Per-target customization (ldflags, build flags, output names)
+- **NEW in v1.0.5**: List available build targets with `-list-targets`
 - Special handling for Raspberry Pi (modern and Jessie)
 - Generates checksums
 - Creates archives (ZIP for Windows, tar.gz for others)
-- No complex configuration files
+- No complex configuration files (for simple projects)
 - Just uncomment platforms in platforms.txt to build for them
 - Make release of the project to github
+- Full backward compatibility - existing projects work unchanged
 
 ## Synopsis
 
 ```
+./go-xbuild-go v1.0.5
 A program to cross compile go programs
 
 Environment variables (for github release):
@@ -103,16 +115,25 @@ Environment variables (for github release):
   GH_CLI_PATH      Custom path to GitHub CLI executable (optional)
 
 Usage:
+  Legacy mode (single binary):
   - Copy platforms.txt at the root of your project
   - Edit platforms.txt to uncomment the platforms you want to build for
   - Create a VERSION file with your version (e.g. v1.0.1)
   - Then run ./go-xbuild-go
 
+  Multi-binary mode:
+  - Create a build-config.json file (see example below)
+  - Run ./go-xbuild-go -config build-config.json
+
 Options:
   -additional-files string
     	Comma-separated list of additional files to include in archives
+  -config string
+    	Path to build configuration file (JSON)
   -help
     	Show help information and exit
+  -list-targets
+    	List available build targets and exit
   -pi
     	Build Raspberry Pi (default true)
   -release
@@ -123,10 +144,38 @@ Options:
     	File containing release notes (required if -release-note not specified and release_notes.md doesn't exist)
   -version
     	Show version information and exit
+Notes:
+ The following files are automatically included if they exist:
+ README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1
+ Do not specify these files in -additional-files as they will conflict.
+
+
+For single-main project, there is no need for any configuration
+But configuration is required for multi-main project
+Example build-config.json for multi-main project:
+{
+  "project_name": "myproject",
+  "version_file": "VERSION",
+  "platforms_file": "platforms.txt",
+  "default_ldflags": "-s -w",
+  "default_build_flags": "-trimpath",
+  "targets": [
+    {
+      "name": "cli",
+      "path": "./cmd/cli"
+	  "output_name": "mycli"
+    },
+    {
+      "name": "server",
+      "path": "./cmd/server",
+      "output_name": "myserver"
+    }
+  ]
+}
 ```
 
 ## Version
-The current version is 1.0.4
+The current version is 1.0.5
 
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
@@ -153,7 +202,9 @@ Please look at [How to use](#how-to-use)
 
 
 ## Usage
-Run go-xbuild-go from the root of your project.  Update VERSION file if needed.
+
+### Legacy mode (single binary)
+Run go-xbuild-go from the root of your project. Update VERSION file if needed.
 Then, compile the binaries:
 
 ```bash
@@ -168,7 +219,86 @@ The program will:
 5. Generate checksums for all archives
 6. Place all artifacts in _./bin_ directory
 
+### Multi-binary mode
+For projects with multiple main packages (e.g., `cmd/cli/`, `cmd/server/`), create a `build-config.json` file and run:
+
+```bash
+# List available targets
+go-xbuild-go -config build-config.json -list-targets
+
+# Build all targets
+go-xbuild-go -config build-config.json
+
+# Create GitHub release
+go-xbuild-go -config build-config.json -release -release-note "Multi-binary release"
+```
+
+## Multi-Binary Configuration
+
+The JSON configuration file supports the following structure:
+
+```json
+{
+  "project_name": "myproject",
+  "version_file": "VERSION",
+  "platforms_file": "platforms.txt",
+  "default_ldflags": "-s -w -X main.version={{.Version}} -X main.commit={{.Commit}}",
+  "default_build_flags": "-trimpath",
+  "targets": [
+    {
+      "name": "cli",
+      "path": "./cmd/cli",
+      "output_name": "mycli"
+    },
+    {
+      "name": "server", 
+      "path": "./cmd/server",
+      "output_name": "myserver"
+    },
+    {
+      "name": "admin",
+      "path": "./cmd/admin"
+    }
+  ]
+}
+```
+
+**Configuration options:**
+- `project_name`: Project name used in archive names
+- `version_file`: Path to file containing version (default: "VERSION")
+- `platforms_file`: Path to platforms definition file (default: "platforms.txt")  
+- `default_ldflags`: Default linker flags applied to all targets
+- `default_build_flags`: Default build flags applied to all targets
+- `targets`: Array of build targets
+
+**Target options:**
+- `name`: Target identifier (used in `-list-targets`)
+- `path`: Path to main package (e.g., "./cmd/cli")
+- `output_name`: Custom binary name (optional, defaults to target name)
+
+**Variable substitution in ldflags:**
+- `{{.Version}}`: Replaced with version from VERSION file
+- `{{.Commit}}`: Replaced with current git commit hash
+- `{{.Date}}`: Replaced with build timestamp
+
+**Example project structure:**
+```
+myproject/
+├── cmd/
+│   ├── cli/main.go
+│   ├── server/main.go
+│   └── admin/main.go
+├── build-config.json
+├── platforms.txt
+├── VERSION
+└── README.md
+```
+
+For a complete working example, see: [go-multi-main-example](https://github.com/example/go-multi-main-example)
+
 ## Output Structure
+
+### Legacy mode:
 ```
 bin/
 ├── project-v1.0.1-darwin-amd64.d.tar.gz
@@ -180,6 +310,18 @@ bin/
 └── project-v1.0.1-checksums.txt
 ```
 
+### Multi-binary mode:
+```
+bin/
+├── mycli-v1.0.1-darwin-amd64.d.tar.gz
+├── mycli-v1.0.1-linux-amd64.d.tar.gz
+├── myserver-v1.0.1-darwin-amd64.d.tar.gz
+├── myserver-v1.0.1-linux-amd64.d.tar.gz
+├── admin-v1.0.1-darwin-amd64.d.tar.gz
+├── admin-v1.0.1-linux-amd64.d.tar.gz
+└── myproject-v1.0.1-checksums.txt
+```
+
 ## Included Files
 The following files will be included in archives if they exist:
 - Compiled binary
@@ -187,7 +329,7 @@ The following files will be included in archives if they exist:
 - LICENSE.txt
 - docs/project-name.1 (man page)
 - platforms.txt
-- Add extra files with `-additional-files`
+- Add extra files with `-additional-files` (Do not add these default: README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1)
 
 ## How to release your project to github
 
@@ -223,20 +365,32 @@ of VERSION file will be created.
 
 Now Run:
 
+**Legacy mode:**
 ```
 go-xbuild-go \
         -release \
         -release-note "Release v1.0.1"
 ```
-or
+
+**Multi-binary mode:**
 ```
 go-xbuild-go \
+        -config build-config.json \
+        -release \
+        -release-note "Multi-binary release v1.0.1"
+```
+
+Other release options work the same:
+```
+go-xbuild-go \
+        -config build-config.json \
         -release \
         -release-note-file "release_notes.md"
 ```
 or
 ```
 go-xbuild-go \
+        -config build-config.json \
         -release \
         -release-note "Release v1.0.x" \
         -release-note-file "release_notes.md"
@@ -244,10 +398,8 @@ go-xbuild-go \
 ```
 or if `release_notes.md` exists in the current working directory:
 ```
-go-xbuild-go -release
+go-xbuild-go -config build-config.json -release
 ```
-
-
 
 By default, it looks file `release_notes.md` in the current working directory. 
 
@@ -258,7 +410,7 @@ Pull requests welcome! Please keep it simple.
 MIT License - See LICENSE file for details.
 
 ## Author
-Developed with Claude AI 3.7 Sonnet, working under my guidance and instructions.
+Developed with Claude AI Sonnet 4, working under my guidance and instructions.
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Apr-20-2025</sub>
+<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Jun-22-2025</sub>

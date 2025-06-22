@@ -2,10 +2,11 @@ package main
 
 /////////////////////////////////////////////////////////////////////
 // Cross compile go programs for other platforms
+// Enhanced version with support for multiple main packages
 // Developed with Claude AI 3.7 Sonnet, working under my guidance and
 // instructions.
 // muquit@muquit.com Mar-26-2025
-/// v1.0.4 - Apr-09-2025 
+/// v1.1.0 - Enhanced for modular Go projects
 /////////////////////////////////////////////////////////////////////
 
 import (
@@ -15,6 +16,7 @@ import (
 	"compress/gzip"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -27,22 +29,45 @@ import (
 )
 
 const (
-	version = "1.0.4"
+	version = "1.0.5"
 	url     = "https://github.com/muquit/go-xbuild-go"
 )
 
 var buildForPi = true
 
-// Configuration constants
+// BuildTarget represents a single binary to build
+type BuildTarget struct {
+	Name            string   `json:"name"`            // Binary name (e.g., "cli", "server")
+	Path            string   `json:"path"`            // Build path (e.g., "./cmd/cli", "./cmd/server")
+	OutputName      string   `json:"output_name"`     // Custom output name (optional)
+	LdFlags         string   `json:"ldflags"`         // Custom ldflags (optional)
+	BuildFlags      string   `json:"build_flags"`     // Custom build flags (optional)
+	AdditionalFiles []string `json:"additional_files"` // Target-specific additional files
+}
+
+// ProjectConfig represents the configuration for a multi-binary project
+type ProjectConfig struct {
+	ProjectName     string        `json:"project_name"`
+	Version         string        `json:"version"`
+	VersionFile     string        `json:"version_file"`
+	PlatformsFile   string        `json:"platforms_file"`
+	DefaultLdFlags  string        `json:"default_ldflags"`
+	DefaultBuildFlags string      `json:"default_build_flags"`
+	GlobalAdditionalFiles []string `json:"global_additional_files"`
+	Targets         []BuildTarget `json:"targets"`
+}
+
+// Configuration constants (legacy support)
 type Config struct {
-	ProjectName   string
-	BinDir        string
-	VersionFile   string
-	PlatformsFile string
-	ChecksumsFile string
-	LdFlags       string
-	BuildFlags    string
-	AdditionalFiles []string 
+	ProjectName     string
+	BinDir          string
+	VersionFile     string
+	PlatformsFile   string
+	ChecksumsFile   string
+	LdFlags         string
+	BuildFlags      string
+	AdditionalFiles []string
+	ProjectConfig   *ProjectConfig // New: multi-target config
 }
 
 func main() {
@@ -52,15 +77,18 @@ func main() {
 	var releaseNote string
 	var releaseNoteFile string
 	var additionalFiles string
+	var configFile string
+	var listTargets bool
 
 	flag.BoolVar(&showVersion, "version", false, "Show version information and exit")
 	flag.BoolVar(&showHelp, "help", false, "Show help information and exit")
 	flag.BoolVar(&buildForPi, "pi", true, "Build Raspberry Pi")
-
 	flag.BoolVar(&makeRelease, "release", false, "Create a GitHub release")
 	flag.StringVar(&releaseNote, "release-note", "", "Release note text (required if -release-note-file not specified and release_notes.md doesn't exist)")
 	flag.StringVar(&releaseNoteFile, "release-note-file", "", "File containing release notes (required if -release-note not specified and release_notes.md doesn't exist)")
 	flag.StringVar(&additionalFiles, "additional-files", "", "Comma-separated list of additional files to include in archives")
+	flag.StringVar(&configFile, "config", "", "Path to build configuration file (JSON)")
+	flag.BoolVar(&listTargets, "list-targets", false, "List available build targets and exit")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "%s v%s\n", os.Args[0], version)
@@ -69,12 +97,43 @@ func main() {
 		fmt.Fprintf(os.Stderr, "  GITHUB_TOKEN     GitHub API token (required for -release)\n")
 		fmt.Fprintf(os.Stderr, "  GH_CLI_PATH      Custom path to GitHub CLI executable (optional)\n\n")
 		fmt.Fprintf(os.Stderr, "Usage:\n")
+		fmt.Fprintf(os.Stderr, "  Legacy mode (single binary):\n")
 		fmt.Fprintf(os.Stderr, "  - Copy platforms.txt at the root of your project\n")
 		fmt.Fprintf(os.Stderr, "  - Edit platforms.txt to uncomment the platforms you want to build for\n")
 		fmt.Fprintf(os.Stderr, "  - Create a VERSION file with your version (e.g. v1.0.1)\n")
 		fmt.Fprintf(os.Stderr, "  - Then run %s\n\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "  Multi-binary mode:\n")
+		fmt.Fprintf(os.Stderr, "  - Create a build-config.json file (see example below)\n")
+		fmt.Fprintf(os.Stderr, "  - Run %s -config build-config.json\n\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, "Options:\n")
 		flag.PrintDefaults()
+		fmt.Fprintf(os.Stderr, "Notes:\n")
+		fmt.Fprintf(os.Stderr, " The following files are automatically included if they exist:\n")
+		fmt.Fprintf(os.Stderr, " README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1\n")
+		fmt.Fprintf(os.Stderr, " Do not specify these files in -additional-files as they will conflict.\n\n")
+		fmt.Fprintf(os.Stderr, "\nFor single-main project, there is no need for any configuration\n")
+		fmt.Fprintf(os.Stderr, "But configuration is required for multi-main project\n")
+		fmt.Fprintf(os.Stderr, "Example build-config.json for multi-main project:\n")
+		fmt.Fprintf(os.Stderr, `{
+  "project_name": "myproject",
+  "version_file": "VERSION",
+  "platforms_file": "platforms.txt",
+  "default_ldflags": "-s -w",
+  "default_build_flags": "-trimpath",
+  "targets": [
+    {
+      "name": "cli",
+      "path": "./cmd/cli"
+	  "output_name": "mycli"
+    },
+    {
+      "name": "server",
+      "path": "./cmd/server",
+      "output_name": "myserver"
+    }
+  ]
+}
+`)
 	}
 	flag.Parse()
 
@@ -84,12 +143,7 @@ func main() {
 	}
 
 	if showHelp {
-		fmt.Printf("%s v%s\n", os.Args[0], version)
-		fmt.Println("A program to cross compile go programs for various platforms")
-		fmt.Println("- Copy platforms.txt at the root of your project")
-		fmt.Println("- Edit platforms.txt to uncomment the platforms you want to build for")
-		fmt.Println("- Create a VERSION file with your version (e.g. v1.0.1)")
-		fmt.Println("- Then run go-xbuild-go")
+		flag.Usage()
 		os.Exit(0)
 	}
 
@@ -110,6 +164,35 @@ func main() {
 		BuildFlags:    "-trimpath",
 	}
 
+	// Load project configuration if specified
+	if configFile != "" {
+		projectConfig, err := loadProjectConfig(configFile, myDir)
+		if err != nil {
+			fail("Failed to load config file: " + err.Error())
+		}
+		config.ProjectConfig = projectConfig
+		
+		// Override some values from project config
+		if projectConfig.ProjectName != "" {
+			config.ProjectName = projectConfig.ProjectName
+		}
+		if projectConfig.VersionFile != "" {
+			if filepath.IsAbs(projectConfig.VersionFile) {
+				config.VersionFile = projectConfig.VersionFile
+			} else {
+				config.VersionFile = filepath.Join(myDir, projectConfig.VersionFile)
+			}
+		}
+		if projectConfig.PlatformsFile != "" {
+			if filepath.IsAbs(projectConfig.PlatformsFile) {
+				config.PlatformsFile = projectConfig.PlatformsFile
+			} else {
+				config.PlatformsFile = filepath.Join(myDir, projectConfig.PlatformsFile)
+			}
+		}
+	}
+
+	// Handle additional files from command line
 	if additionalFiles != "" {
 		config.AdditionalFiles = strings.Split(additionalFiles, ",")
 		// Trim spaces from each file path
@@ -118,7 +201,21 @@ func main() {
 		}
 	}
 
-	// ./bin must have the archives
+	// List targets if requested
+	if listTargets {
+		if config.ProjectConfig != nil {
+			fmt.Printf("Available build targets for %s:\n", config.ProjectName)
+			for _, target := range config.ProjectConfig.Targets {
+				fmt.Printf("  - %s (path: %s)\n", target.Name, target.Path)
+			}
+		} else {
+			fmt.Printf("No multi-target configuration found. Running in legacy single-binary mode.\n")
+			fmt.Printf("Target: %s (current directory)\n", config.ProjectName)
+		}
+		os.Exit(0)
+	}
+
+	// ./bin must have the archives for release
 	if makeRelease {
 		err = createRelease(&config, releaseNote, releaseNoteFile)
 		if err != nil {
@@ -127,15 +224,245 @@ func main() {
 		os.Exit(0)
 	}
 
-	// otherise, run the main process
-	fmt.Printf("Building project: %s\n", config.ProjectName)
-	err = process(&config)
+	// Otherwise, run the main process
+	if config.ProjectConfig != nil {
+		fmt.Printf("Building multi-target project: %s\n", config.ProjectName)
+		err = processMultiTarget(&config)
+	} else {
+		fmt.Printf("Building single-target project: %s\n", config.ProjectName)
+		err = process(&config)
+	}
+	
 	if err != nil {
 		fail(err.Error())
 	}
 }
 
-// Create a GitHub release
+// Load project configuration from JSON file
+func loadProjectConfig(configPath, baseDir string) (*ProjectConfig, error) {
+	// Make path absolute if it's relative
+	if !filepath.IsAbs(configPath) {
+		configPath = filepath.Join(baseDir, configPath)
+	}
+
+	data, err := os.ReadFile(configPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read config file: %v", err)
+	}
+
+	var config ProjectConfig
+	if err := json.Unmarshal(data, &config); err != nil {
+		return nil, fmt.Errorf("failed to parse config file: %v", err)
+	}
+
+	// Validate configuration
+	if len(config.Targets) == 0 {
+		return nil, fmt.Errorf("no build targets specified in config")
+	}
+
+	for i, target := range config.Targets {
+		if target.Name == "" {
+			return nil, fmt.Errorf("target %d is missing a name", i)
+		}
+		if target.Path == "" {
+			return nil, fmt.Errorf("target %s is missing a path", target.Name)
+		}
+	}
+
+	return &config, nil
+}
+
+// Process multi-target builds
+func processMultiTarget(config *Config) error {
+	// Initialize
+	if err := initialize(config); err != nil {
+		return err
+	}
+
+	// Get version
+	version, err := getVersion(config)
+	if err != nil {
+		return err
+	}
+
+	projectConfig := config.ProjectConfig
+	fmt.Printf("Building %s version %s with %d targets\n", config.ProjectName, version, len(projectConfig.Targets))
+	fmt.Printf("The binaries are cross compiled with %s\n", url)
+
+	// Build each target
+	for _, target := range projectConfig.Targets {
+		fmt.Printf("\n=== Building target: %s ===\n", target.Name)
+		
+		// Create target-specific config
+		targetConfig := *config
+		targetConfig.ProjectName = target.Name
+		if target.OutputName != "" {
+			targetConfig.ProjectName = target.OutputName
+		}
+
+		// Set target-specific build parameters
+		targetConfig.LdFlags = projectConfig.DefaultLdFlags
+		if target.LdFlags != "" {
+			targetConfig.LdFlags = target.LdFlags
+		}
+		
+		targetConfig.BuildFlags = projectConfig.DefaultBuildFlags
+		if target.BuildFlags != "" {
+			targetConfig.BuildFlags = target.BuildFlags
+		}
+
+		// Combine global and target-specific additional files
+		targetConfig.AdditionalFiles = append(projectConfig.GlobalAdditionalFiles, target.AdditionalFiles...)
+		targetConfig.AdditionalFiles = append(targetConfig.AdditionalFiles, config.AdditionalFiles...) // Add CLI files
+
+		// Clean existing checksums for this target
+		checksumFile := filepath.Join(config.BinDir, fmt.Sprintf("%s-%s-%s", targetConfig.ProjectName, version, config.ChecksumsFile))
+		if err := os.RemoveAll(checksumFile); err != nil && !os.IsNotExist(err) {
+			return fmt.Errorf("failed to remove old checksums file: %v", err)
+		}
+
+		// Build for platforms in platforms.txt
+		if err := buildForPlatformsWithPath(&targetConfig, version, target.Path); err != nil {
+			return fmt.Errorf("failed to build target %s: %v", target.Name, err)
+		}
+
+		if buildForPi {
+			// Build for Raspberry Pi variants
+			if err := buildPiWithPath(&targetConfig, version, target.Path, "", "7"); err != nil {
+				return fmt.Errorf("failed to build target %s for Pi: %v", target.Name, err)
+			}
+			if err := buildPiWithPath(&targetConfig, version, target.Path, "-jessie", "6"); err != nil {
+				return fmt.Errorf("failed to build target %s for Pi Jessie: %v", target.Name, err)
+			}
+		}
+
+		fmt.Printf("Target %s build complete\n", target.Name)
+	}
+
+	fmt.Printf("\nAll targets build complete. Artifacts are in %s\n", config.BinDir)
+	return nil
+}
+
+// Build for platforms with custom path
+func buildForPlatformsWithPath(config *Config, version, buildPath string) error {
+	file, err := os.Open(config.PlatformsFile)
+	if err != nil {
+		return fmt.Errorf("failed to open platforms file: %v", err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		parts := strings.Split(line, "/")
+		if len(parts) < 2 {
+			continue
+		}
+
+		goos := parts[0]
+		goarch := parts[1]
+
+		fmt.Printf("Building for %s/%s\n", goos, goarch)
+
+		distDir := fmt.Sprintf("%s-%s-%s-%s.d", config.ProjectName, version, goos, goarch)
+		binaryName := fmt.Sprintf("%s-%s-%s-%s", config.ProjectName, version, goos, goarch)
+		if goos == "windows" {
+			binaryName += ".exe"
+		}
+
+		// Set environment variables
+		env := []string{
+			"GOOS=" + goos,
+			"GOARCH=" + goarch,
+		}
+
+		// Build binary with custom path
+		if err := gobuildWithPath(config, binaryName, buildPath, env); err != nil {
+			return fmt.Errorf("failed to build for %s/%s: %v", goos, goarch, err)
+		}
+
+		// Copy files
+		if err := copyFiles(config, binaryName, distDir); err != nil {
+			return err
+		}
+
+		// Create archive
+		if err := createArchive(config, version, distDir, goos); err != nil {
+			return err
+		}
+
+		// Remove binary
+		if err := os.Remove(binaryName); err != nil {
+			return fmt.Errorf("failed to remove binary: %v", err)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return fmt.Errorf("failed to read platforms file: %v", err)
+	}
+
+	return nil
+}
+
+// Build for Raspberry Pi with custom path
+func buildPiWithPath(config *Config, version, buildPath, variant, armVersion string) error {
+	distDir := fmt.Sprintf("%s-%s-raspberry-pi%s.d", config.ProjectName, version, variant)
+	binaryName := fmt.Sprintf("%s-%s-raspberry-pi%s", config.ProjectName, version, variant)
+
+	// Set environment variables
+	env := []string{
+		"GOOS=linux",
+		"GOARCH=arm",
+		"GOARM=" + armVersion,
+	}
+
+	fmt.Printf("Building for raspberry pi%s (arm%s)\n", variant, armVersion)
+
+	// Build binary with custom path
+	if err := gobuildWithPath(config, binaryName, buildPath, env); err != nil {
+		return fmt.Errorf("failed to build for raspberry pi: %v", err)
+	}
+
+	// Copy files
+	if err := copyFiles(config, binaryName, distDir); err != nil {
+		return err
+	}
+
+	// Create archive
+	if err := createArchive(config, version, distDir, "linux"); err != nil {
+		return err
+	}
+
+	// Remove binary
+	return os.Remove(binaryName)
+}
+
+// Helper function to run go build with custom path
+func gobuildWithPath(config *Config, output, buildPath string, env []string) error {
+	args := []string{
+		"build",
+		"-ldflags=" + config.LdFlags,
+		config.BuildFlags,
+		"-o", output,
+	}
+	
+	// Add build path if specified
+	if buildPath != "" && buildPath != "." {
+		args = append(args, buildPath)
+	}
+
+	cmd := exec.Command("go", args...)
+	cmd.Env = append(os.Environ(), env...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
 // Create a GitHub release
 func createRelease(config *Config, note, noteFile string) error {
 	// Check if GitHub CLI exists
@@ -288,7 +615,7 @@ func checkGhCliExists() error {
 	return nil
 }
 
-// Process handles the main build process
+// Process handles the main build process (legacy single-target mode)
 func process(config *Config) error {
 	// Initialize
 	if err := initialize(config); err != nil {
@@ -368,7 +695,6 @@ func fail(msg string) {
 // Calculate sha256 checksum and append to checksums file
 func takeChecksum(config *Config, version, archive string) error {
 	checksumFilename := fmt.Sprintf("%s-%s-%s", config.ProjectName, version, config.ChecksumsFile)
-	//	checksumPath := filepath.Join(config.BinDir, checksumFilename)
 
 	// Change to bin directory to get relative paths
 	currentDir, err := os.Getwd()
@@ -434,18 +760,31 @@ func copyFiles(config *Config, bin, distDir string) error {
 		}
 	}
 
-    // Copy additional files if specified
-    for _, filePath := range config.AdditionalFiles {
-        if _, err := os.Stat(filePath); err == nil {
-            destPath := filepath.Join(distDir, filepath.Base(filePath))
-            if err := copyFile(filePath, destPath); err != nil {
-                return fmt.Errorf("failed to copy additional file %s: %v", filePath, err)
-            }
-            fmt.Printf("Added additional file: %s\n", filePath)
-        } else {
-            fmt.Printf("Warning: additional file not found: %s\n", filePath)
-        }
-    }
+	// Copy additional files if specified
+	/*
+	for _, filePath := range config.AdditionalFiles {
+		if _, err := os.Stat(filePath); err == nil {
+			destPath := filepath.Join(distDir, filepath.Base(filePath))
+			if err := copyFile(filePath, destPath); err != nil {
+				return fmt.Errorf("failed to copy additional file %s: %v", filePath, err)
+			}
+			fmt.Printf("Added additional file: %s\n", filePath)
+		} else {
+			fmt.Printf("Warning: additional file not found: %s\n", filePath)
+		}
+	}
+	*/
+	for _, filePath := range config.AdditionalFiles {
+		if _, err := os.Stat(filePath); err == nil {
+			destPath := filepath.Join(distDir, filepath.Base(filePath))
+			if err := copyFile(filePath, destPath); err != nil {
+				return fmt.Errorf("failed to copy additional file %s: %v", filePath, err)
+			}
+			fmt.Printf("Added additional file: %s\n", filePath)
+		} else {
+			fmt.Printf("Warning: additional file not found: %s\n", filePath)
+		}
+	}
 
 	return nil
 }
@@ -641,7 +980,7 @@ func tarGzDir(srcDir, destTarGz string) error {
 	})
 }
 
-// Build for Raspberry Pi
+// Build for Raspberry Pi (legacy single-target mode)
 func buildPi(config *Config, version, variant, armVersion string) error {
 	distDir := fmt.Sprintf("%s-%s-raspberry-pi%s.d", config.ProjectName, version, variant)
 	binaryName := fmt.Sprintf("%s-%s-raspberry-pi%s", config.ProjectName, version, variant)
@@ -674,7 +1013,7 @@ func buildPi(config *Config, version, variant, armVersion string) error {
 	return os.Remove(binaryName)
 }
 
-// Helper function to run go build
+// Helper function to run go build (legacy single-target mode)
 func gobuild(config *Config, output string, env []string) error {
 	args := []string{
 		"build",
@@ -691,7 +1030,7 @@ func gobuild(config *Config, output string, env []string) error {
 	return cmd.Run()
 }
 
-// Build for platforms in platforms.txt
+// Build for platforms in platforms.txt (legacy single-target mode)
 func buildForPlatforms(config *Config, version string) error {
 	file, err := os.Open(config.PlatformsFile)
 	if err != nil {
