@@ -15,7 +15,7 @@
   - [Multi-Binary Configuration](#multi-binary-configuration)
   - [Output Structure](#output-structure)
   - [Included Files](#included-files)
-  - [How to release your project to github](#how-to-release-your-project-to-github)
+  - [How to release your project to github (Any kind, not just golang based projects)](#how-to-release-your-project-to-github-any-kind-not-just-golang-based-projects)
   - [Contributing](#contributing)
   - [License](#license)
   - [Author](#author)
@@ -316,7 +316,7 @@ The following files will be included in archives if they exist:
 - platforms.txt
 - Add extra files with `-additional-files` (Do not add these default: README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1)
 
-## How to release your project to github
+## How to release your project to github (Any kind, not just golang based projects)
 
 Now that you cross-compiled and created archives for your go project, you 
 can use go-xbuild-go to publish it to GitHub.  Note: any project can be 
@@ -356,11 +356,12 @@ go-xbuild-go \
         -release-note "Release v1.0.1"
 ```
 
+To make a formatted release note, create a file `release_notes.md`. By default, it looks for file `release_notes.md` in the current working directory. Then type:
+
 ```
 go-xbuild-go -release
 ```
 
-By default, it looks file `release_notes.md` in the current working directory. 
 
 ## Contributing
 Pull requests welcome! Please keep it simple.
@@ -372,4 +373,4 @@ MIT License - See LICENSE file for details.
 Developed with Claude AI Sonnet 4, working under my guidance and instructions.
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Jun-22-2025</sub>
+<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Sep-08-2025</sub>
