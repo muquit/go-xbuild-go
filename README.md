@@ -2,23 +2,24 @@
 ## Table Of Contents
   - [Introduction](#introduction)
   - [Background and Motivation](#background-and-motivation)
-  - [How to use](#how-to-use)
   - [Features](#features)
   - [Synopsis](#synopsis)
-  - [Version](#version)
+  - [Latest Version (v1.0.6)](#latest-version-v106)
   - [Installation](#installation)
     - [Download](#download)
     - [Building from source](#building-from-source)
-  - [Usage](#usage)
+  - [How to use](#how-to-use)
+  - [Example](#example)
     - [Legacy mode (single binary)](#legacy-mode-single-binary)
     - [Multi-binary mode](#multi-binary-mode)
   - [Multi-Binary Configuration](#multi-binary-configuration)
   - [Output Structure](#output-structure)
   - [Included Files](#included-files)
+  - [Config file for single binary project](#config-file-for-single-binary-project)
   - [How to release your project to github (Any kind, not just golang based projects)](#how-to-release-your-project-to-github-any-kind-not-just-golang-based-projects)
   - [Contributing](#contributing)
   - [License](#license)
-  - [Author](#author)
+  - [Authors](#authors)
 
 ## Introduction
 
@@ -31,6 +32,7 @@ The program can be used to:
 - Make releases to github - with ease. Not just go projects, **any project** can be released to github,
 just copy the assets to `./bin` directory. Please look at Look at [How to release
 your project to github](#how-to-release-your-project-to-github) for details.
+
 
 ## Background and Motivation
 
@@ -45,6 +47,122 @@ Hope you will find it useful and fun to use.
 This is a [go](https://go.dev/) port of my bash script https://github.com/muquit/go-xbuild
 
 Pull requests, suggestions are always welcome.
+
+
+
+## Features
+- Simple to use and maintain
+- Cross compile for multiple platforms
+- **NEW in v1.0.5**: Multi-binary project support with JSON configuration
+- **NEW in v1.0.5**: Build multiple main packages from `cmd/` directory structure
+- **NEW in v1.0.5**: Per-target customization (ldflags, build flags, output names)
+- **NEW in v1.0.5**: List available build targets with `-list-targets`
+- Special handling for Raspberry Pi (modern and Jessie)
+- Generates checksums
+- Creates archives (ZIP for Windows, tar.gz for others)
+- No complex configuration files (for simple projects)
+- Just uncomment platforms in platforms.txt to build for them
+- Make release of the project to github
+- Full backward compatibility - existing projects work unchanged
+
+## Synopsis
+```
+go-xbuild-go v1.0.6
+A program to cross compile go programs and release any software to github
+
+Usage:
+  go-xbuild-go [options]                    # Build using defaults or config file
+  go-xbuild-go -config build-config.json   # Build using custom config
+  go-xbuild-go -release                     # Create GitHub release from ./bin
+
+Quick Start:
+  1. Create/edit platforms.txt (uncomment desired platforms)
+  2. Create VERSION file (e.g., v1.0.1)
+  3. Run go-xbuild-go
+
+Options:
+  -additional-files string
+    	Comma-separated list of additional files to include in archives
+  -build-args string
+    	Additional go build arguments (e.g., '-tags systray -race')
+  -config string
+    	Path to build configuration file (JSON)
+  -help
+    	Show help information and exit
+  -list-targets
+    	List available build targets and exit
+  -pi
+    	Build Raspberry Pi (default true)
+  -platforms-file string
+    	Path of platforms.txt (default "platforms.txt")
+  -release
+    	Create a GitHub release
+  -release-note string
+    	Release note text (required if -release-note-file not specified and release_notes.md doesn't exist)
+  -release-note-file string
+    	File containing release notes (required if -release-note not specified and release_notes.md doesn't exist)
+  -version
+    	Show version information and exit
+
+Environment Variables (for GitHub release):
+  GITHUB_TOKEN     GitHub API token (required for -release)
+  GH_CLI_PATH      Custom path to GitHub CLI executable (optional)
+
+Automatically Included Files:
+  README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1
+  (Don't specify these in -additional-files)
+
+Config File:
+  Optional JSON file for advanced configuration (any project type, single or multi main).
+  Useful for multi-target builds, custom flags, or organized projects.
+
+A Minimal example config file (build-config.json):
+{
+  "project_name": "myproject",
+  "version_file": "VERSION",
+  "platforms_file": "platforms.txt",
+  "default_ldflags": "-s -w",
+  "default_build_flags": "-trimpath",
+  "targets": [
+    {
+      "name": "cli",
+      "path": "./cmd/cli",
+      "output_name": "mycli"
+    },
+    {
+      "name": "server",
+      "path": "./cmd/server",
+      "output_name": "myserver"
+    }
+  ]
+}
+Please consult documentaiton for details
+```
+
+## Latest Version (v1.0.6)
+The current version is v1.0.6
+Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
+
+## Installation
+
+### Download
+
+Download pre-compiled binaries from [Releases](https://github.com/muquit/go-xbuild-go/releases) page.
+
+Please look at [How to use](#how-to-use) on how to use it.
+
+
+### Building from source
+
+Install [Go](https://go.dev/) first
+
+```bash
+git clone https://github.com/muquit/go-xbuild-go
+cd go-xbuild-go
+go build .
+or 
+make build
+```
 
 
 ## How to use
@@ -87,119 +205,7 @@ linux/amd64
 ...
 ```
 
-## Features
-- Simple to use and maintain
-- Cross compile for multiple platforms
-- **NEW in v1.0.5**: Multi-binary project support with JSON configuration
-- **NEW in v1.0.5**: Build multiple main packages from `cmd/` directory structure
-- **NEW in v1.0.5**: Per-target customization (ldflags, build flags, output names)
-- **NEW in v1.0.5**: List available build targets with `-list-targets`
-- Special handling for Raspberry Pi (modern and Jessie)
-- Generates checksums
-- Creates archives (ZIP for Windows, tar.gz for others)
-- No complex configuration files (for simple projects)
-- Just uncomment platforms in platforms.txt to build for them
-- Make release of the project to github
-- Full backward compatibility - existing projects work unchanged
-
-## Synopsis
-
-```
-./go-xbuild-go v1.0.5
-A program to cross compile go programs
-
-Environment variables (for github release):
-  GITHUB_TOKEN     GitHub API token (required for -release)
-  GH_CLI_PATH      Custom path to GitHub CLI executable (optional)
-
-Usage:
-  Legacy mode (single binary):
-  - Copy platforms.txt at the root of your project
-  - Edit platforms.txt to uncomment the platforms you want to build for
-  - Create a VERSION file with your version (e.g. v1.0.1)
-  - Then run ./go-xbuild-go
-
-  Multi-binary mode:
-  - Create a build-config.json file (see example below)
-  - Run ./go-xbuild-go -config build-config.json
-
-Options:
-  -additional-files string
-    	Comma-separated list of additional files to include in archives
-  -config string
-    	Path to build configuration file (JSON)
-  -help
-    	Show help information and exit
-  -list-targets
-    	List available build targets and exit
-  -pi
-    	Build Raspberry Pi (default true)
-  -release
-    	Create a GitHub release
-  -release-note string
-    	Release note text (required if -release-note-file not specified and release_notes.md doesn't exist)
-  -release-note-file string
-    	File containing release notes (required if -release-note not specified and release_notes.md doesn't exist)
-  -version
-    	Show version information and exit
-Notes:
- The following files are automatically included if they exist:
- README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1
- Do not specify these files in -additional-files as they will conflict.
-
-
-For single-main project, there is no need for any configuration
-But configuration is required for multi-main project
-Example build-config.json for multi-main project:
-{
-  "project_name": "myproject",
-  "version_file": "VERSION",
-  "platforms_file": "platforms.txt",
-  "default_ldflags": "-s -w",
-  "default_build_flags": "-trimpath",
-  "targets": [
-    {
-      "name": "cli",
-      "path": "./cmd/cli"
-	  "output_name": "mycli"
-    },
-    {
-      "name": "server",
-      "path": "./cmd/server",
-      "output_name": "myserver"
-    }
-  ]
-}
-```
-
-## Version
-The current version is 1.0.5
-
-Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
-
-## Installation
-
-### Download
-
-Download pre-compiled binaries from
-[Releases](https://github.com/muquit/go-xbuild-go/releases) page
-
-Please look at [How to use](#how-to-use) 
-
-
-### Building from source
-
-Install [go](https://go.dev/) first
-
-```bash
-git clone https://github.com/muquit/go-xbuild-go
-cd go-xbuild-go
-go build .
-```
-Please look at [How to use](#how-to-use) 
-
-
-## Usage
+## Example
 
 ### Legacy mode (single binary)
 Run go-xbuild-go from the root of your project. Update VERSION file if needed.
@@ -267,6 +273,8 @@ The JSON configuration file supports the following structure:
 - `platforms_file`: Path to platforms definition file (default: "platforms.txt")  
 - `default_ldflags`: Default linker flags applied to all targets
 - `default_build_flags`: Default build flags applied to all targets
+- `ldflags`: Custom ldflags
+- `build_flags`: Custom build flags
 - `targets`: Array of build targets
 
 **Target options:**
@@ -315,6 +323,34 @@ The following files will be included in archives if they exist:
 - docs/project-name.1 (man page)
 - platforms.txt
 - Add extra files with `-additional-files` (Do not add these default: README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1)
+## Config file for single binary project
+
+`build-config.json` with `-config` flag can be used for single binary
+project as well. Example for `go-xbuild-go` itself:
+```json
+{
+  "project_name": "go-xbuild-go",
+  "version_file": "VERSION",
+  "platforms_file": "platforms.txt",
+  "default_ldflags": "-s -w -X 'github.com/muquit/go-xbiuld-go/pkg/version.Version=v1.0.1' -X 'main.buildTime={{.BuildTime}}'",
+  "default_build_flags": "-trimpath",
+  "global_additional_files": [
+    "README.md",
+    "LICENSE",
+    "build-config.json"
+  ],
+  "targets": [
+    {
+      "name": "go-xbuild-go",
+      "path": ".",
+      "output_name": "go-xbuild-go",
+      "build_flags": "-trimpath",
+      "build-args": "-s -w -X 'github.com/muquit/go-xbiuld-go/pkg/version.Version=v1.0.1' -X 'main.buildTime={{.BuildTime}}'"
+    }
+  ]
+}
+```
+
 
 ## How to release your project to github (Any kind, not just golang based projects)
 
@@ -362,15 +398,15 @@ To make a formatted release note, create a file `release_notes.md`. By default, 
 go-xbuild-go -release
 ```
 
-
 ## Contributing
 Pull requests welcome! Please keep it simple.
 
 ## License
-MIT License - See LICENSE file for details.
+MIT License - See [LICENSE](LICENSE) file for details.
 
-## Author
-Developed with Claude AI Sonnet 4, working under my guidance and instructions.
+## Authors
+Developed with [Claude AI 4 Sonnet](https://claude.ai), working under my guidance and instructions.
+
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Sep-08-2025</sub>
+<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Sep-25-2025</sub>

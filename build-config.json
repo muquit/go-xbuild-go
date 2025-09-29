@@ -1,0 +1,21 @@
+{
+  "project_name": "go-xbuild-go",
+  "version_file": "VERSION",
+  "platforms_file": "platforms.txt",
+  "default_ldflags": "-s -w -X 'github.com/muquit/go-xbiuld-go/pkg/version.Version=v1.0.1' -X 'main.buildTime={{.BuildTime}}'",
+  "default_build_flags": "-trimpath",
+  "global_additional_files": [
+    "README.md",
+    "LICENSE",
+    "build-config.json"
+  ],
+  "targets": [
+    {
+      "name": "go-xbuild-go",
+      "path": ".",
+      "output_name": "go-xbuild-go",
+      "build_flags": "-trimpath",
+      "build-args": "-s -w -X 'github.com/muquit/go-xbiuld-go/pkg/version.Version=v1.0.1' -X 'main.        buildTime={{.BuildTime}}'"
+    }
+  ]
+}

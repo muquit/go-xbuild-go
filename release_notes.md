@@ -1,23 +1,30 @@
-# go-xbuild-go v1.0.5
+# go-xbuild-go v1.0.6
 
-**Major feature**: Multi-binary Go project support with full backward compatibility.
+Added support for arbitrary `go build` arguments and improved argument parsing 
+(flag `-build-args`)
 
-## New Features
-- **Multi-target builds**: New `-config` flag for JSON configuration files
-- **Multiple main packages**: Build `cmd/cli`, `cmd/server`, etc. in one command  
-Please look at
-[go-multi-main-example](https://github.com/muquit/go-multi-main-example) for
-an example.
-- **Per-target customization**: Individual ldflags, build flags, and additional files
-- **New `-list-targets` flag**: Show available build targets
+These binaries are built with `go-xbuild-go -build-args '-ldflags "-s -w" -trimpath'
 
-## Usage
-Legacy projects work unchanged. For multi-binary projects:
+Please look at [ChangeLog](ChangeLog.md) for details on what has changed 
+in the current version. 
+
+* The binaries are cross-compiled with [go-xbuild-go](https://github.com/muquit/go-xbuild-go)
+* The release was made with [go-xbuild-go](https://github.com/muquit/go-xbuild-go) as well.
+
+Do not forget to check checksums of the archives before using.
+
 ```bash
-go-xbuild-go -config build-config.json
+# sha256sum -c go-xbuild-go-v1.0.6-checksums.txt
+go-xbuild-go-v1.0.6-darwin-amd64.d.tar.gz: OK
+go-xbuild-go-v1.0.6-darwin-arm64.d.tar.gz: OK
+go-xbuild-go-v1.0.6-linux-amd64.d.tar.gz: OK
+go-xbuild-go-v1.0.6-linux-arm.d.tar.gz: OK
+go-xbuild-go-v1.0.6-linux-arm64.d.tar.gz: OK
+go-xbuild-go-v1.0.6-windows-386.d.zip: OK
+go-xbuild-go-v1.0.6-windows-amd64.d.zip: OK
+go-xbuild-go-v1.0.6-raspberry-pi.d.tar.gz: OK
+go-xbuild-go-v1.0.6-raspberry-pi-jessie.d.tar.gz: OK
 ```
-
-Please look at [ChangeLog](ChangeLog.md) for details on what has changed in the current version. The binaries are cross-compiled with https://github.com/muquit/go-xbuild-go. Do not forget to check checksums of the archives before using.
 
 Thanks!
 

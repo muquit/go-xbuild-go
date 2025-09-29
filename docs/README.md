@@ -173,6 +173,8 @@ Install [go](https://go.dev/) first
 git clone https://github.com/muquit/go-xbuild-go
 cd go-xbuild-go
 go build .
+or 
+make build
 ```
 Please look at [How to use](#how-to-use) 
 

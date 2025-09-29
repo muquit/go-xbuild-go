@@ -26,10 +26,12 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+
+	"github.com/muquit/go-xbuild-go/pkg/version"
 )
 
 const (
-	version = "1.0.5"
+	me      = "go-xbuild-go"
 	url     = "https://github.com/muquit/go-xbuild-go"
 )
 
@@ -68,6 +70,7 @@ type Config struct {
 	BuildFlags      string
 	AdditionalFiles []string
 	ProjectConfig   *ProjectConfig // New: multi-target config
+	ExtraBuildArgs  []string
 }
 
 func main() {
@@ -79,7 +82,10 @@ func main() {
 	var additionalFiles string
 	var configFile string
 	var listTargets bool
+	var buildArgs string
+	var platformsFile string
 
+	flag.StringVar(&buildArgs, "build-args", "", "Additional go build arguments (e.g., '-tags systray -race')")
 	flag.BoolVar(&showVersion, "version", false, "Show version information and exit")
 	flag.BoolVar(&showHelp, "help", false, "Show help information and exit")
 	flag.BoolVar(&buildForPi, "pi", true, "Build Raspberry Pi")
@@ -88,33 +94,54 @@ func main() {
 	flag.StringVar(&releaseNoteFile, "release-note-file", "", "File containing release notes (required if -release-note not specified and release_notes.md doesn't exist)")
 	flag.StringVar(&additionalFiles, "additional-files", "", "Comma-separated list of additional files to include in archives")
 	flag.StringVar(&configFile, "config", "", "Path to build configuration file (JSON)")
+
+	flag.StringVar(&platformsFile,"platforms-file","platforms.txt","Path of platforms.txt")
+
 	flag.BoolVar(&listTargets, "list-targets", false, "List available build targets and exit")
 
-	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "%s v%s\n", os.Args[0], version)
-		fmt.Fprintf(os.Stderr, "A program to cross compile go programs\n\n")
-		fmt.Fprintf(os.Stderr, "Environment variables (for github release):\n")
-		fmt.Fprintf(os.Stderr, "  GITHUB_TOKEN     GitHub API token (required for -release)\n")
-		fmt.Fprintf(os.Stderr, "  GH_CLI_PATH      Custom path to GitHub CLI executable (optional)\n\n")
-		fmt.Fprintf(os.Stderr, "Usage:\n")
-		fmt.Fprintf(os.Stderr, "  Legacy mode (single binary):\n")
-		fmt.Fprintf(os.Stderr, "  - Copy platforms.txt at the root of your project\n")
-		fmt.Fprintf(os.Stderr, "  - Edit platforms.txt to uncomment the platforms you want to build for\n")
-		fmt.Fprintf(os.Stderr, "  - Create a VERSION file with your version (e.g. v1.0.1)\n")
-		fmt.Fprintf(os.Stderr, "  - Then run %s\n\n", os.Args[0])
-		fmt.Fprintf(os.Stderr, "  Multi-binary mode:\n")
-		fmt.Fprintf(os.Stderr, "  - Create a build-config.json file (see example below)\n")
-		fmt.Fprintf(os.Stderr, "  - Run %s -config build-config.json\n\n", os.Args[0])
-		fmt.Fprintf(os.Stderr, "Options:\n")
-		flag.PrintDefaults()
-		fmt.Fprintf(os.Stderr, "Notes:\n")
-		fmt.Fprintf(os.Stderr, " The following files are automatically included if they exist:\n")
-		fmt.Fprintf(os.Stderr, " README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1\n")
-		fmt.Fprintf(os.Stderr, " Do not specify these files in -additional-files as they will conflict.\n\n")
-		fmt.Fprintf(os.Stderr, "\nFor single-main project, there is no need for any configuration\n")
-		fmt.Fprintf(os.Stderr, "But configuration is required for multi-main project\n")
-		fmt.Fprintf(os.Stderr, "Example build-config.json for multi-main project:\n")
-		fmt.Fprintf(os.Stderr, `{
+flag.Usage = func() {
+	// Determine output destination - stdout if help explicitly requested, stderr otherwise
+	out := os.Stderr
+	for _, arg := range os.Args[1:] {
+		if arg == "-h" || arg == "-help" || arg == "--help" {
+			out = os.Stdout
+			break
+		}
+	}
+	
+	fmt.Fprintf(out, "%s %s\n", me, version.Get())
+	fmt.Fprintf(out, "A program to cross compile go programs and release any software to github\n\n")
+	
+	fmt.Fprintf(out, "Usage:\n")
+	fmt.Fprintf(out, "  %s [options]                    # Build using defaults or config file\n", me)
+	fmt.Fprintf(out, "  %s -config build-config.json   # Build using custom config\n", me)
+	fmt.Fprintf(out, "  %s -release                     # Create GitHub release from ./bin\n\n", me)
+	
+	fmt.Fprintf(out, "Quick Start:\n")
+	fmt.Fprintf(out, "  1. Create/edit platforms.txt (uncomment desired platforms)\n")
+	fmt.Fprintf(out, "  2. Create VERSION file (e.g., v1.0.1)\n")
+	fmt.Fprintf(out, "  3. Run %s\n\n", me)
+	
+	fmt.Fprintf(out, "Options:\n")
+	
+	// Set flag output to match our choice
+	flag.CommandLine.SetOutput(out)
+	flag.PrintDefaults()
+	
+	fmt.Fprintf(out, "\nEnvironment Variables (for GitHub release):\n")
+	fmt.Fprintf(out, "  GITHUB_TOKEN     GitHub API token (required for -release)\n")
+	fmt.Fprintf(out, "  GH_CLI_PATH      Custom path to GitHub CLI executable (optional)\n")
+	
+	fmt.Fprintf(out, "\nAutomatically Included Files:\n")
+	fmt.Fprintf(out, "  README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1\n")
+	fmt.Fprintf(out, "  (Don't specify these in -additional-files)\n")
+	
+	fmt.Fprintf(out, "\nConfig File:\n")
+	fmt.Fprintf(out, "  Optional JSON file for advanced configuration (any project type, single or multi main).\n")
+	fmt.Fprintf(out, "  Useful for multi-target builds, custom flags, or organized projects.\n\n")
+	
+	fmt.Fprintf(out, "A Minimal example config file (build-config.json):\n")
+	fmt.Fprintf(out, `{
   "project_name": "myproject",
   "version_file": "VERSION",
   "platforms_file": "platforms.txt",
@@ -123,8 +150,8 @@ func main() {
   "targets": [
     {
       "name": "cli",
-      "path": "./cmd/cli"
-	  "output_name": "mycli"
+      "path": "./cmd/cli",
+      "output_name": "mycli"
     },
     {
       "name": "server",
@@ -134,11 +161,15 @@ func main() {
   ]
 }
 `)
-	}
+
+	fmt.Fprintf(out, "Please consult documentaiton for details\n")
+}
+
+
 	flag.Parse()
 
 	if showVersion {
-		fmt.Printf("%s v%s\n", os.Args[0], version)
+		fmt.Printf("%s %s\n", me, version.Get())
 		os.Exit(0)
 	}
 
@@ -163,6 +194,9 @@ func main() {
 		LdFlags:       "-s -w",
 		BuildFlags:    "-trimpath",
 	}
+
+	// specify an alternate one
+	config.PlatformsFile = platformsFile
 
 	// Load project configuration if specified
 	if configFile != "" {
@@ -191,6 +225,14 @@ func main() {
 			}
 		}
 	}
+	// parse additional build args
+	if buildArgs != "" {
+	parsedArgs, err := parseArguments(buildArgs)
+	if err != nil {
+		fail("Failed to parse build arguments: " + err.Error())
+	}
+	config.ExtraBuildArgs = parsedArgs
+}
 
 	// Handle additional files from command line
 	if additionalFiles != "" {
@@ -366,7 +408,7 @@ func buildForPlatformsWithPath(config *Config, version, buildPath string) error 
 		goos := parts[0]
 		goarch := parts[1]
 
-		fmt.Printf("Building for %s/%s\n", goos, goarch)
+		fmt.Printf("\n> Building for %s/%s\n", goos, goarch)
 
 		distDir := fmt.Sprintf("%s-%s-%s-%s.d", config.ProjectName, version, goos, goarch)
 		binaryName := fmt.Sprintf("%s-%s-%s-%s", config.ProjectName, version, goos, goarch)
@@ -420,7 +462,7 @@ func buildPiWithPath(config *Config, version, buildPath, variant, armVersion str
 		"GOARM=" + armVersion,
 	}
 
-	fmt.Printf("Building for raspberry pi%s (arm%s)\n", variant, armVersion)
+	fmt.Printf("\n> Building for raspberry pi%s (arm%s)\n", variant, armVersion)
 
 	// Build binary with custom path
 	if err := gobuildWithPath(config, binaryName, buildPath, env); err != nil {
@@ -441,8 +483,48 @@ func buildPiWithPath(config *Config, version, buildPath, variant, armVersion str
 	return os.Remove(binaryName)
 }
 
-// Helper function to run go build with custom path
+// new--Sep-14-2025 
 func gobuildWithPath(config *Config, output, buildPath string, env []string) error {
+	args := []string{"build"}
+
+	// Add ldflags if specified
+	if config.LdFlags != "" {
+		args = append(args, "-ldflags="+config.LdFlags)
+	}
+
+	// Parse and add build flags
+	if config.BuildFlags != "" {
+		buildFlagArgs, err := parseArguments(config.BuildFlags)
+		if err != nil {
+			return fmt.Errorf("failed to parse build flags: %v", err)
+		}
+		args = append(args, buildFlagArgs...)
+	}
+
+	// Add extra build args from command line
+	if len(config.ExtraBuildArgs) > 0 {
+		args = append(args, config.ExtraBuildArgs...)
+	}
+
+	// Add output flag
+	args = append(args, "-o", output)
+
+	// Add build path if specified
+	if buildPath != "" && buildPath != "." {
+		args = append(args, buildPath)
+	}
+
+	cmd := exec.Command("go", args...)
+	cmd.Env = append(os.Environ(), env...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+// new--Sep-14-2025 
+
+// Helper function to run go build with custom path
+func gobuildWithPathOld(config *Config, output, buildPath string, env []string) error {
 	args := []string{
 		"build",
 		"-ldflags=" + config.LdFlags,
@@ -992,7 +1074,7 @@ func buildPi(config *Config, version, variant, armVersion string) error {
 		"GOARM=" + armVersion,
 	}
 
-	fmt.Printf("Building for raspberry pi%s (arm%s)\n", variant, armVersion)
+	fmt.Printf("> Building for raspberry pi%s (arm%s)\n", variant, armVersion)
 
 	// Build binary
 	if err := gobuild(config, binaryName, env); err != nil {
@@ -1012,9 +1094,43 @@ func buildPi(config *Config, version, variant, armVersion string) error {
 	// Remove binary
 	return os.Remove(binaryName)
 }
+// new -Sep-14-2025 
+func gobuild(config *Config, output string, env []string) error {
+	args := []string{"build"}
+
+	// Add ldflags if specified
+	if config.LdFlags != "" {
+		args = append(args, "-ldflags="+config.LdFlags)
+	}
+
+	// Parse and add build flags
+	if config.BuildFlags != "" {
+		buildFlagArgs, err := parseArguments(config.BuildFlags)
+		if err != nil {
+			return fmt.Errorf("failed to parse build flags: %v", err)
+		}
+		args = append(args, buildFlagArgs...)
+	}
+
+	// Add extra build args from command line
+	if len(config.ExtraBuildArgs) > 0 {
+		args = append(args, config.ExtraBuildArgs...)
+	}
+
+	// Add output flag
+	args = append(args, "-o", output)
+
+	cmd := exec.Command("go", args...)
+	cmd.Env = append(os.Environ(), env...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+// new -Sep-14-2025 
 
 // Helper function to run go build (legacy single-target mode)
-func gobuild(config *Config, output string, env []string) error {
+func gobuildOld(config *Config, output string, env []string) error {
 	args := []string{
 		"build",
 		"-ldflags=" + config.LdFlags,
@@ -1053,7 +1169,7 @@ func buildForPlatforms(config *Config, version string) error {
 		goos := parts[0]
 		goarch := parts[1]
 
-		fmt.Printf("Building for %s/%s\n", goos, goarch)
+		fmt.Printf("> Building for %s/%s\n", goos, goarch)
 
 		distDir := fmt.Sprintf("%s-%s-%s-%s.d", config.ProjectName, version, goos, goarch)
 		binaryName := fmt.Sprintf("%s-%s-%s-%s", config.ProjectName, version, goos, goarch)
@@ -1093,4 +1209,50 @@ func buildForPlatforms(config *Config, version string) error {
 	}
 
 	return nil
+}
+
+// parseArguments parses a string of build arguments, respecting quotes
+func parseArguments(argStr string) ([]string, error) {
+	var args []string
+	var current strings.Builder
+	var inQuotes bool
+	var quoteChar rune
+
+	argStr = strings.TrimSpace(argStr)
+	if argStr == "" {
+		return args, nil
+	}
+
+	for i, char := range argStr {
+		switch {
+		case char == '"' || char == '\'':
+			if !inQuotes {
+				inQuotes = true
+				quoteChar = char
+			} else if char == quoteChar {
+				inQuotes = false
+				quoteChar = 0
+			} else {
+				current.WriteRune(char)
+			}
+		case char == ' ' && !inQuotes:
+			if current.Len() > 0 {
+				args = append(args, current.String())
+				current.Reset()
+			}
+		default:
+			current.WriteRune(char)
+		}
+
+		// Handle end of string
+		if i == len(argStr)-1 && current.Len() > 0 {
+			args = append(args, current.String())
+		}
+	}
+
+	if inQuotes {
+		return nil, fmt.Errorf("unclosed quote in build arguments")
+	}
+
+	return args, nil
 }

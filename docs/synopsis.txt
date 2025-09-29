@@ -1,0 +1,73 @@
+## Synopsis
+```
+go-xbuild-go v1.0.6
+A program to cross compile go programs and release any software to github
+
+Usage:
+  go-xbuild-go [options]                    # Build using defaults or config file
+  go-xbuild-go -config build-config.json   # Build using custom config
+  go-xbuild-go -release                     # Create GitHub release from ./bin
+
+Quick Start:
+  1. Create/edit platforms.txt (uncomment desired platforms)
+  2. Create VERSION file (e.g., v1.0.1)
+  3. Run go-xbuild-go
+
+Options:
+  -additional-files string
+    	Comma-separated list of additional files to include in archives
+  -build-args string
+    	Additional go build arguments (e.g., '-tags systray -race')
+  -config string
+    	Path to build configuration file (JSON)
+  -help
+    	Show help information and exit
+  -list-targets
+    	List available build targets and exit
+  -pi
+    	Build Raspberry Pi (default true)
+  -platforms-file string
+    	Path of platforms.txt (default "platforms.txt")
+  -release
+    	Create a GitHub release
+  -release-note string
+    	Release note text (required if -release-note-file not specified and release_notes.md doesn't exist)
+  -release-note-file string
+    	File containing release notes (required if -release-note not specified and release_notes.md doesn't exist)
+  -version
+    	Show version information and exit
+
+Environment Variables (for GitHub release):
+  GITHUB_TOKEN     GitHub API token (required for -release)
+  GH_CLI_PATH      Custom path to GitHub CLI executable (optional)
+
+Automatically Included Files:
+  README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1
+  (Don't specify these in -additional-files)
+
+Config File:
+  Optional JSON file for advanced configuration (any project type, single or multi main).
+  Useful for multi-target builds, custom flags, or organized projects.
+
+A Minimal example config file (build-config.json):
+{
+  "project_name": "myproject",
+  "version_file": "VERSION",
+  "platforms_file": "platforms.txt",
+  "default_ldflags": "-s -w",
+  "default_build_flags": "-trimpath",
+  "targets": [
+    {
+      "name": "cli",
+      "path": "./cmd/cli",
+      "output_name": "mycli"
+    },
+    {
+      "name": "server",
+      "path": "./cmd/server",
+      "output_name": "myserver"
+    }
+  ]
+}
+Please consult documentaiton for details
+```

@@ -1,0 +1,14 @@
+## Features
+- Simple to use and maintain
+- Cross compile for multiple platforms
+- **NEW in v1.0.5**: Multi-binary project support with JSON configuration
+- **NEW in v1.0.5**: Build multiple main packages from `cmd/` directory structure
+- **NEW in v1.0.5**: Per-target customization (ldflags, build flags, output names)
+- **NEW in v1.0.5**: List available build targets with `-list-targets`
+- Special handling for Raspberry Pi (modern and Jessie)
+- Generates checksums
+- Creates archives (ZIP for Windows, tar.gz for others)
+- No complex configuration files (for simple projects)
+- Just uncomment platforms in platforms.txt to build for them
+- Make release of the project to github
+- Full backward compatibility - existing projects work unchanged

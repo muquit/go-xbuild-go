@@ -6,24 +6,49 @@
 README_ORIG=./docs/README.md
 README=./README.md
 BINARY=./go-xbuild-go
-GEN_TOC_PROG=markdown-toc-go
+VERSION := $(shell cat VERSION)
+LDFLAGS := -ldflags "-w -s -X 'github.com/muquit/go-xbuild-go/pkg/version.Version=$(VERSION)'"
+BUILD_OPTIONS = -trimpath
+MARKDOWN_TOC_PROG=markdown-toc-go
+GLOSSARY_FILE=./docs/glossary.txt
+SF=./docs/synopsis.txt
+VF=./docs/version.md
+BADGEF=./docs/badges.md
+MAIN_MD=docs/main.md
 
 all: build build_all doc
 
 build:
 	@echo "*** Compiling ..."
-	go build -o $(BINARY)
+	go build $(BUILD_OPTIONS) $(LDFLAGS) -o $(BINARY)
 
-build_all: build
+build_all: build doc
 	@/bin/rm -rf ./bin
 	@echo "*** Cross Compiling ...."
-	$(BINARY)
+	# -build-args was added on v1.0.6 Sep-14-2025 
+	$(BINARY) -build-args '$(BUILD_OPTIONS) $(LDFLAGS)' \
+		-additional-files 'build-config.json'
 
-doc:
+doc: gen_files
 	@echo "*** Generating README.md with TOC ..."
-	chmod 600 $(README)
-	$(GEN_TOC_PROG) -i $(README_ORIG) -o $(README) -pre-toc-file docs/badges.md -f
-	chmod 444 $(README)
+	@touch $(README)
+	@chmod 600 $(README)
+	$(MARKDOWN_TOC_PROG) -i $(MAIN_MD) -o $(README) --glossary ${GLOSSARY_FILE} -pre-toc-file $(BADGEF) -f
+	@chmod 444 $(README)
+
+
+gen_files: gen_synopsis ver
+
+gen_synopsis: build
+	echo '## Synopsis' > $(SF)
+	echo '```' >> $(SF)
+	$(BINARY) -h >> $(SF) 2>&1
+	echo '```' >> $(SF)
+
+ver:
+	echo "## Latest Version ($(VERSION))" > $(VF)
+	echo "The current version is $(VERSION)" >> $(VF)
+	echo "Please look at @CHANGELOG@ for what has changed in the current version.">> $(VF)
 
 # make sure:
 #  - to run: make clean

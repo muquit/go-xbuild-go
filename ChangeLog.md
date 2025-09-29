@@ -1,31 +1,48 @@
 ## Contents
 
+- [v1.0.6](#v106)
 - [v1.0.5](#v105)
 - [v1.0.4](#v104)
 - [v1.0.3](#v103)
 - [v1.0.2](#v102)
 - [v1.0.1](#v101)
 
-# v1.0.5
-**Major feature release**: Added support for multi-binary Go projects while maintaining full backward compatibility.
+# v1.0.6
+- Added support for arbitrary `go build` arguments and improved argument parsing.
+(flag `-build-args`).
+- Add example to use `build-config.json` for single binary project.
 
-**Migration**: Existing projects work unchanged. To use multi-binary features, create a `build-config.json` file (see documentation for examples).
-- **Multi-target configuration system**: New `-config` flag accepts JSON configuration file for building multiple binaries from a single project
+-  New `-build-args` flag allows passing arbitrary `go build` flags (e.g.,
+`-build-args '-tags systray -race'`, `-build-args  '-ldflags "-s -w" -trimpath'`). Can be used with `build-config.json` as well
+
+- New flag `-platforms-file` to specify a platforms file. Can be useful if
+needed to build for a specific platform.
+
+- Fixed some bugs parsing `build_config.json` file.
+
+- Please look at `Makefile` for real examples
+
+(Sep-14-2025)
+
+# v1.0.5
+* Added support for multi-binary Go projects while maintaining full backward compatibility.
+* Existing projects work unchanged. To use multi-binary features, create a `build-config.json` file (see documentation for examples).
+- New `-config` flag accepts JSON configuration file for building multiple binaries from a single project
   - Example: `go-xbuild-go -config build-config.json`
 Please look at
 [go-multi-main-example](https://github.com/muquit/go-multi-main-example) for
 an example
-- **Multiple main package support**: Can now build projects with `cmd/cli/main.go`, `cmd/server/main.go`, etc. structure
-- **Flexible build paths**: Each target can specify custom build path like `./cmd/cli` or `./cmd/server`
+- Can now build projects with `cmd/cli/main.go`, `cmd/server/main.go`, etc. structure
+- Each target can specify custom build path like `./cmd/cli` or `./cmd/server`
 - **Per-target customization**:
  - Individual ldflags and build flags per binary
  - Target-specific additional files (e.g., different config files per component)
  - Custom output binary names
-- **Unified cross-compilation**: Single command builds all project binaries across all platforms
-- **Independent archives**: Each binary gets its own platform-specific archives and checksums
-- **New `-list-targets` flag**: Shows all available build targets from configuration file
-- **Enhanced help system**: Displays example JSON configuration in help output
-- **Backward compatibility**: Simple single-binary projects continue to work exactly as before without any configuration file
+- Single command builds all project binaries across all platforms
+- Each binary gets its own platform-specific archives and checksums
+- New `-list-targets` flag: Shows all available build targets from configuration file
+- Displays example JSON configuration in help output
+- Simple single-binary projects continue to work exactly as before without any configuration file
 
 Modern Go projects using the standard `cmd/` directory layout can now build all components (CLI tools, servers, admin utilities) in one unified cross-platform build process.
 
