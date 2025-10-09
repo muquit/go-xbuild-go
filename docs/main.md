@@ -8,5 +8,6 @@
 @[:markdown](example.md)
 @[:markdown](howtorelease.md)
 @[:markdown](contribute.md)
+@[:markdown](todo.md)
 @[:markdown](license.md)
 @[:markdown](authors.md)

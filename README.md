@@ -6,7 +6,10 @@
   - [Synopsis](#synopsis)
   - [Latest Version (v1.0.7)](#latest-version-v107)
   - [Installation](#installation)
-    - [Download](#download)
+    - [1. Download](#1-download)
+    - [2. Verify Checksum](#2-verify-checksum)
+    - [3. Extract](#3-extract)
+    - [4. Install](#4-install)
     - [Building from source](#building-from-source)
   - [How to use](#how-to-use)
   - [Example](#example)
@@ -18,6 +21,7 @@
   - [Config file for single binary project](#config-file-for-single-binary-project)
   - [How to release your project to github (Any kind, not just golang based projects)](#how-to-release-your-project-to-github-any-kind-not-just-golang-based-projects)
   - [Contributing](#contributing)
+  - [TODO](#todo)
   - [License](#license)
   - [Authors](#authors)
 
@@ -145,12 +149,46 @@ Please look at [ChangeLog](ChangeLog.md) for what has changed in the current ver
 
 ## Installation
 
-### Download
+### 1. Download
+* Download the appropriate archive for your platform from the [Releases](https://github.com/muquit/go-xbuild-go/releases) page
 
-Download pre-compiled binaries from [Releases](https://github.com/muquit/go-xbuild-go/releases) page.
+### 2. Verify Checksum
 
-Please look at [How to use](#how-to-use) on how to use it.
+```bash
+# Download the checksums file
+# Verify the archive
+sha256sum -c go-xbuild-go-vX.X.X-darwin-arm64.d.tar.gz
+```
+Repeat the step for other archives
 
+### 3. Extract
+macOS/Linux:
+
+```bash
+tar -xzf go-xbuild-go-vX.X.X-darwin-arm64.d.tar.gz
+cd go-xbuild-go-vX.X.X-darwin-arm64.d
+```
+
+Repeat the step for other archives
+
+Windows:
+
+The tar command is available in Windows 10 (1803) and later, or you can
+use the GUI (right-click → Extract All). After extracting, copy/rename the
+binary somewhere in your PATH.
+
+### 4. Install
+
+```bash
+# macOS/Linux
+sudo cp go-xbuild-go-vX.X.X-darwin-arm64 /usr/local/bin/go-xbuild-go
+sudo chmod +x /usr/local/bin/go-xbuild-go
+```
+
+```bash
+# Windows
+copy go-xbuild-go-vX.X.X-windows-amd64.exe C:\Windows\System32\go-xbuild-go.exe
+```
 
 ### Building from source
 
@@ -163,6 +201,8 @@ go build .
 or 
 make build
 ```
+
+Please look at [Makefile](Makefile) for more info
 
 
 ## How to use
@@ -401,11 +441,16 @@ go-xbuild-go -release
 ## Contributing
 Pull requests welcome! Please keep it simple.
 
+## TODO
+
+Add support to `-release` option for releasing software so that the software
+can be installed from [Releases](https://github.com/muquit/go-xbuild-go/releases) page using [Homebrew](https://brew.sh/) on Mac
+
 ## License
 MIT License - See [LICENSE](LICENSE) file for details.
 
 ## Authors
-Developed with [Claude AI 4 Sonnet](https://claude.ai), working under my guidance and instructions.
+Developed with [Claude AI Sonnet 4/4.5](https://claude.ai), working under my guidance and instructions.
 
 
 ---
