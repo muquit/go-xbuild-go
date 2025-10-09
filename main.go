@@ -514,6 +514,14 @@ func gobuildWithPath(config *Config, output, buildPath string, env []string) err
 		args = append(args, buildPath)
 	}
 
+	// Debug: Print all arguments
+	fmt.Println("=== DEBUG: Arguments being passed to gh ===")
+	fmt.Printf("Number of args: %d\n", len(args))
+	for i, arg := range args {
+		fmt.Printf("  [%d]: %s\n", i, arg)
+	}
+	fmt.Println("=== END DEBUG ===")
+
 	cmd := exec.Command("go", args...)
 	cmd.Env = append(os.Environ(), env...)
 	cmd.Stdout = os.Stdout
@@ -523,30 +531,166 @@ func gobuildWithPath(config *Config, output, buildPath string, env []string) err
 }
 // new--Sep-14-2025 
 
-// Helper function to run go build with custom path
-func gobuildWithPathOld(config *Config, output, buildPath string, env []string) error {
-	args := []string{
-		"build",
-		"-ldflags=" + config.LdFlags,
-		config.BuildFlags,
-		"-o", output,
-	}
-	
-	// Add build path if specified
-	if buildPath != "" && buildPath != "." {
-		args = append(args, buildPath)
+
+// Oct-07-2025 --
+func createRelease(config *Config, note, noteFile string) error {
+	fmt.Println("=== DEBUG: createRelease function started ===")
+	// Check if GitHub CLI exists
+	if err := checkGhCliExists(); err != nil {
+		return err
 	}
 
-	cmd := exec.Command("go", args...)
-	cmd.Env = append(os.Environ(), env...)
+	// Check if GITHUB_TOKEN is set
+	if os.Getenv("GITHUB_TOKEN") == "" {
+		return fmt.Errorf("GITHUB_TOKEN environment variable is not set")
+	}
+
+	// Get version
+	version, err := getVersion(config)
+	if err != nil {
+		return err
+	}
+
+	// Check if bin directory exists and is not empty
+	if _, err := os.Stat(config.BinDir); os.IsNotExist(err) {
+		return fmt.Errorf("bin directory does not exist")
+	}
+
+	// Check if bin directory has files
+	files, err := os.ReadDir(config.BinDir)
+	if err != nil {
+		return fmt.Errorf("failed to read bin directory: %v", err)
+	}
+	if len(files) == 0 {
+		return fmt.Errorf("bin directory is empty")
+	}
+
+	// Get the appropriate gh command
+	ghCmd := getGhCommand()
+
+	// Prepare the command arguments for creating release (without assets)
+	args := []string{
+		"release",
+		"create",
+		version,
+	}
+
+	// Handle release notes
+	if note != "" && noteFile != "" {
+		// Create a temporary file for combined notes
+		tempFile, err := os.CreateTemp("", "release-notes-*.md")
+		if err != nil {
+			return fmt.Errorf("failed to create temporary file for release notes: %v", err)
+		}
+		defer os.Remove(tempFile.Name())
+
+		// Write the inline note
+		if _, err := tempFile.WriteString(note + "\n\n"); err != nil {
+			tempFile.Close()
+			return fmt.Errorf("failed to write inline note to temporary file: %v", err)
+		}
+
+		// Append the file content
+		fileContent, err := os.ReadFile(noteFile)
+		if err != nil {
+			tempFile.Close()
+			return fmt.Errorf("failed to read release note file: %v", err)
+		}
+
+		if _, err := tempFile.Write(fileContent); err != nil {
+			tempFile.Close()
+			return fmt.Errorf("failed to write file content to temporary file: %v", err)
+		}
+
+		tempFile.Close()
+		args = append(args, "--notes-file", tempFile.Name())
+	} else if note != "" {
+		// Use the --notes flag directly
+		args = append(args, "--notes", note)
+	} else if noteFile != "" {
+		// Check if file exists
+		if _, err := os.Stat(noteFile); os.IsNotExist(err) {
+			return fmt.Errorf("release note file does not exist: %s", noteFile)
+		}
+		args = append(args, "--notes-file", noteFile)
+	} else {
+		// Check if default release notes file exists
+		defaultNoteFile := "release_notes.md"
+		if _, err := os.Stat(defaultNoteFile); os.IsNotExist(err) {
+			return fmt.Errorf("no release notes specified and default file '%s' does not exist", defaultNoteFile)
+		}
+		args = append(args, "--notes-file", defaultNoteFile)
+	}
+
+	// Step 1: Create the release without assets
+	fmt.Printf("Creating GitHub release %s (without assets)\n", version)
+	cmd := exec.Command(ghCmd, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	return cmd.Run()
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to create GitHub release: %v", err)
+	}
+
+	// Step 2: Upload assets in batches
+	fmt.Println("Uploading assets to release...")
+
+	var assetsToUpload []string
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+		fileName := file.Name()
+		// Only include archives and checksum files
+		if strings.HasSuffix(fileName, ".tar.gz") ||
+		   strings.HasSuffix(fileName, ".zip") ||
+		   strings.HasSuffix(fileName, "-checksums.txt") {
+			assetsToUpload = append(assetsToUpload, filepath.Join(config.BinDir, fileName))
+		}
+	}
+
+	// Upload assets in batches of 10 to avoid command line length issues
+	batchSize := 10
+	for i := 0; i < len(assetsToUpload); i += batchSize {
+		end := i + batchSize
+		if end > len(assetsToUpload) {
+			end = len(assetsToUpload)
+		}
+
+		batch := assetsToUpload[i:end]
+		uploadArgs := []string{"release", "upload", version}
+		uploadArgs = append(uploadArgs, batch...)
+
+		fmt.Printf("Uploading batch %d/%d (%d files)...\n",
+			(i/batchSize)+1,
+			(len(assetsToUpload)+batchSize-1)/batchSize,
+			len(batch))
+
+		uploadCmd := exec.Command(ghCmd, uploadArgs...)
+		uploadCmd.Stdout = os.Stdout
+		uploadCmd.Stderr = os.Stderr
+
+		if err := uploadCmd.Run(); err != nil {
+			return fmt.Errorf("failed to upload assets batch: %v", err)
+		}
+	}
+
+	// List releases
+	listCmd := exec.Command(ghCmd, "release", "list")
+	listCmd.Stdout = os.Stdout
+	listCmd.Stderr = os.Stderr
+
+	if err := listCmd.Run(); err != nil {
+		return fmt.Errorf("failed to list GitHub releases: %v", err)
+	}
+
+	fmt.Printf("GitHub release %s created successfully with all assets\n", version)
+	return nil
 }
+// Oct-07-2025 --
 
 // Create a GitHub release
-func createRelease(config *Config, note, noteFile string) error {
+func createReleaseOld(config *Config, note, noteFile string) error {
 	// Check if GitHub CLI exists
 	if err := checkGhCliExists(); err != nil {
 		return err

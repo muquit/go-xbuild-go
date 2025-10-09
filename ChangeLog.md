@@ -1,11 +1,28 @@
 ## Contents
 
+- [v1.0.7](#v107)
 - [v1.0.6](#v106)
 - [v1.0.5](#v105)
 - [v1.0.4](#v104)
 - [v1.0.3](#v103)
 - [v1.0.2](#v102)
 - [v1.0.1](#v101)
+
+# v1.0.7
+- Fixed GitHub release creation failing to upload all component archives 
+in multi-target builds
+  - Previously, `gh release create` with many file arguments would 
+  silently fail to upload some assets
+  - Now uses a two-step approach: creates the release first, then uploads 
+  assets in batches of 10
+  - Resolves issue where only the first component's archives were uploaded 
+  when building projects with multiple binaries
+  - All archives and checksum files now upload reliably regardless of the number of build targets
+
+(Oct-07-2025)
+
+### Changed
+- Improved release asset upload reliability by batching file uploads to avoid command-line argument limitations
 
 # v1.0.6
 - Added support for arbitrary `go build` arguments and improved argument parsing.

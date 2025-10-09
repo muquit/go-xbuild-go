@@ -4,7 +4,7 @@
   - [Background and Motivation](#background-and-motivation)
   - [Features](#features)
   - [Synopsis](#synopsis)
-  - [Latest Version (v1.0.6)](#latest-version-v106)
+  - [Latest Version (v1.0.7)](#latest-version-v107)
   - [Installation](#installation)
     - [Download](#download)
     - [Building from source](#building-from-source)
@@ -67,7 +67,7 @@ Pull requests, suggestions are always welcome.
 
 ## Synopsis
 ```
-go-xbuild-go v1.0.6
+go-xbuild-go v1.0.7
 A program to cross compile go programs and release any software to github
 
 Usage:
@@ -139,8 +139,8 @@ A Minimal example config file (build-config.json):
 Please consult documentaiton for details
 ```
 
-## Latest Version (v1.0.6)
-The current version is v1.0.6
+## Latest Version (v1.0.7)
+The current version is v1.0.7
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
 ## Installation
@@ -409,4 +409,4 @@ Developed with [Claude AI 4 Sonnet](https://claude.ai), working under my guidanc
 
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Sep-25-2025</sub>
+<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Oct-08-2025</sub>
