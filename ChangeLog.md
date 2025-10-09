@@ -19,7 +19,7 @@ in multi-target builds
   when building projects with multiple binaries
   - All archives and checksum files now upload reliably regardless of the number of build targets
 
-(Oct-07-2025)
+(Oct-08-2025)
 
 ### Changed
 - Improved release asset upload reliability by batching file uploads to avoid command-line argument limitations
