@@ -1,6 +1,7 @@
 HOMEBREW    [Homebrew](https://brew.sh/)
 CHANGELOG   [ChangeLog](ChangeLog.md)
 HOWTO       [How to use](#how-to-use)
+HOWTO_RELEASE [How to release your project to github](#how-to-release-your-project-to-github-any-kind- not-just-golang-based-projects)
 GO_XBUILD   [go-xbuild-go](https://github.com/muquit/go-xbuild-go)
 MAKEFILE    [Makefile](Makefile)
 DRAWIO      [draw.io](https://app.diagrams.net/)
