@@ -4,7 +4,7 @@
   - [Background and Motivation](#background-and-motivation)
   - [Features](#features)
   - [Synopsis](#synopsis)
-  - [Latest Version (v1.0.7)](#latest-version-v107)
+  - [Latest Version (v1.0.8)](#latest-version-v108)
   - [Installation](#installation)
     - [1. Download](#1-download)
     - [2. Verify Checksum](#2-verify-checksum)
@@ -70,24 +70,19 @@ Pull requests, suggestions are always welcome.
 
 ## Synopsis
 ```
-go-xbuild-go v1.0.7
+go-xbuild-go v1.0.8
 A program to cross compile go programs and release any software to github
 
 Usage:
-  go-xbuild-go [options]                    # Build using defaults or config file
+  go-xbuild-go [options]             # Build using defaults or config file
   go-xbuild-go -config build-config.json   # Build using custom config
-  go-xbuild-go -release                     # Create GitHub release from ./bin
-
-Quick Start:
-  1. Create/edit platforms.txt (uncomment desired platforms)
-  2. Create VERSION file (e.g., v1.0.1)
-  3. Run go-xbuild-go
+  go-xbuild-go -release               # Create GitHub release from ./bin
 
 Options:
   -additional-files string
-    	Comma-separated list of additional files to include in archives
+    	Comma-separated list of additional files to include
   -build-args string
-    	Additional go build arguments (e.g., '-tags systray -race')
+    	Additional go build arguments (e.g., '-tags systray')
   -config string
     	Path to build configuration file (JSON)
   -help
@@ -95,55 +90,38 @@ Options:
   -list-targets
     	List available build targets and exit
   -pi
-    	Build Raspberry Pi (default true)
+    	Build for Raspberry Pi (default true)
   -platforms-file string
     	Path of platforms.txt (default "platforms.txt")
   -release
     	Create a GitHub release
   -release-note string
-    	Release note text (required if -release-note-file not specified and release_notes.md doesn't exist)
+    	Release note text
   -release-note-file string
-    	File containing release notes (required if -release-note not specified and release_notes.md doesn't exist)
+    	File containing release notes
   -version
     	Show version information and exit
 
 Environment Variables (for GitHub release):
-  GITHUB_TOKEN     GitHub API token (required for -release)
-  GH_CLI_PATH      Custom path to GitHub CLI executable (optional)
-
-Automatically Included Files:
-  README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1
-  (Don't specify these in -additional-files)
+  GITHUB_TOKEN      GitHub API token (required for -release)
+  GH_CLI_PATH       Custom path to GitHub CLI executable (optional)
 
 Config File:
-  Optional JSON file for advanced configuration (any project type, single or multi main).
-  Useful for multi-target builds, custom flags, or organized projects.
+  Optional JSON file for advanced, multi-target builds.
 
-A Minimal example config file (build-config.json):
+A minimal example config file (build-config.json):
 {
   "project_name": "myproject",
   "version_file": "VERSION",
-  "platforms_file": "platforms.txt",
-  "default_ldflags": "-s -w",
-  "default_build_flags": "-trimpath",
   "targets": [
-    {
-      "name": "cli",
-      "path": "./cmd/cli",
-      "output_name": "mycli"
-    },
-    {
-      "name": "server",
-      "path": "./cmd/server",
-      "output_name": "myserver"
-    }
+    { "name": "cli", "path": "./cmd/cli" },
+    { "name": "server", "path": "./cmd/server" }
   ]
 }
-Please consult documentaiton for details
 ```
 
-## Latest Version (v1.0.7)
-The current version is v1.0.7
+## Latest Version (v1.0.8)
+The current version is v1.0.8
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
 ## Installation
@@ -453,4 +431,4 @@ Developed with [Claude AI Sonnet 4/4.5](https://claude.ai), working under my gui
 
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Oct-08-2025</sub>
+<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Oct-13-2025</sub>
