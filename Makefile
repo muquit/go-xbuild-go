@@ -32,9 +32,7 @@ build_all: build doc
 doc: gen_files
 	@echo "*** Generating README.md with TOC ..."
 	@touch $(README)
-	@chmod 600 $(README)
 	$(MARKDOWN_TOC_PROG) -i $(MAIN_MD) -o $(README) --glossary ${GLOSSARY_FILE} -pre-toc-file $(BADGEF) -f
-	@chmod 444 $(README)
 
 
 gen_files: gen_synopsis ver
