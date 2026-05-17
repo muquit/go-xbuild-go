@@ -1,15 +1,5 @@
-## Table Of Contents
-- [v1.0.8](#v108)
-- [v1.0.7](#v107)
-- [v1.0.6](#v106)
-- [v1.0.5](#v105)
-- [v1.0.4](#v104)
-- [v1.0.3](#v103)
-- [v1.0.2](#v102)
-- [v1.0.1](#v101)
-
 # v1.0.8
-- Generate [Homebrew](https://brew.sh/) formula in `Formula/` directory.
+- Generate @HOMEBREW@ formula in `Formula/` directory.
 
 (May-17-2026 )
 

@@ -41,6 +41,37 @@ sudo chmod +x /usr/local/bin/go-xbuild-go
 copy go-xbuild-go-vX.X.X-windows-amd64.exe C:\Windows\System32\go-xbuild-go.exe
 ```
 
+### Installing using Homebrew on Mac
+
+You will need to install @HOMEBREW@ first
+
+#### Installing
+
+Install the custom tap.
+
+```
+brew tap muquit/go-xbuild-go https://github.com/muquit/go-xbuild-go.git
+brew install go-xbuild-go
+```
+
+#### Updating
+
+```
+brew upgrade go-xbuild-go
+```
+
+#### Uninstalling
+
+```
+brew uninstall go-xbuild-go
+```
+
+To remove the tap:
+
+```
+brew untap muquit/go-xbuild-go
+```
+
 ### Building from source
 
 Install @GO@ first
