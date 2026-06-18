@@ -366,20 +366,23 @@ func zipDir(srcDir, destZip string) error {
 	archive := zip.NewWriter(zipFile)
 	defer archive.Close()
 
+	baseDir := filepath.Base(srcDir)
+
 	return filepath.Walk(srcDir, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		// Create a relative path for the file header
+		// Create a relative path for the file header, nested under baseDir
 		header, err := zip.FileInfoHeader(info)
 		if err != nil {
 			return err
 		}
-		header.Name, err = filepath.Rel(srcDir, path)
+		rel, err := filepath.Rel(srcDir, path)
 		if err != nil {
 			return err
 		}
+		header.Name = filepath.Join(baseDir, rel)
 
 		// Add a trailing slash for directories
 		if info.IsDir() {
@@ -422,19 +425,25 @@ func tarGzDir(srcDir, destTarGz string) error {
 	tarWriter := tar.NewWriter(gzipWriter)
 	defer tarWriter.Close()
 
+	baseDir := filepath.Base(srcDir)
+
 	return filepath.Walk(srcDir, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
-		// Create a relative path for the file header
+		// Create a relative path for the file header, nested under baseDir
 		header, err := tar.FileInfoHeader(info, "")
 		if err != nil {
 			return err
 		}
-		header.Name, err = filepath.Rel(srcDir, path)
+		rel, err := filepath.Rel(srcDir, path)
 		if err != nil {
 			return err
+		}
+		header.Name = filepath.Join(baseDir, rel)
+		if info.IsDir() {
+			header.Name += "/"
 		}
 
 		if err := tarWriter.WriteHeader(header); err != nil {
