@@ -19,8 +19,12 @@
   directory instead of creating `go-xbuild-go-v1.0.8-windows-amd64.d/` and
   placing files inside it
   - Archive entries are now correctly nested under the dist directory name again
+- Added `brew trust <tap>` step to the generated Homebrew install
+  instructions (`docs/brew_install.md`) and to the console output printed
+  after a build, since [Homebrew](https://brew.sh/) 6.0+ refuses to load formulae from
+  third-party taps until the tap is explicitly trusted
 
-(Jun-17-2026)
+(Jun-21-2026)
 
 # v1.0.8
 - Generate [Homebrew](https://brew.sh/) formula in `Formula/` directory.
