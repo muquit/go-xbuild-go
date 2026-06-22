@@ -1,4 +1,4 @@
-## How to use
+# How to use
 
 There are two ways to use go-xbuild-go:
 

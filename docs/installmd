@@ -1,6 +1,6 @@
-## Installation
+# Installation
 
-### Download
+## Download
 
 Download pre-compiled binaries from
 [Releases](https://github.com/muquit/go-xbuild-go/releases) page
@@ -8,7 +8,7 @@ Download pre-compiled binaries from
 Please look at [How to use](#how-to-use) 
 
 
-### Building from source
+## Building from source
 
 Install [go](https://go.dev/) first
 

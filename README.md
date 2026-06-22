@@ -1,37 +1,42 @@
-[![Downloads](https://img.shields.io/github/downloads/muquit/go-xbuild-go/total.svg)](https://github.com/muquit/go-build-go/releases)
-## Table Of Contents
-  - [Introduction](#introduction)
-  - [Background and Motivation](#background-and-motivation)
-  - [Features](#features)
-  - [Synopsis](#synopsis)
-  - [Latest Version (v1.0.8)](#latest-version-v108)
-  - [Installation](#installation)
-    - [1. Download](#1-download)
-    - [2. Verify Checksum](#2-verify-checksum)
-    - [3. Extract](#3-extract)
-    - [4. Install](#4-install)
-    - [Installing using Homebrew on Mac](#installing-using-homebrew-on-mac)
-      - [Installing](#installing)
-      - [Updating](#updating)
-      - [Uninstalling](#uninstalling)
-    - [Building from source](#building-from-source)
-  - [How to use](#how-to-use)
-  - [Example](#example)
-    - [Legacy mode (single binary)](#legacy-mode-single-binary)
-    - [Multi-binary mode](#multi-binary-mode)
+[![Downloads](https://img.shields.io/github/downloads/muquit/go-xbuild-go/total.svg)](https://github.com/muquit/go-xbuild-go/releases)
+# Table Of Contents
+- [Introduction](#introduction)
+- [Background and Motivation](#background-and-motivation)
+- [Features](#features)
+- [Synopsis](#synopsis)
+- [Latest Version (v1.0.9)](#latest-version-v1-0-9)
+- [Homebrew Formula Generation](#homebrew-formula-generation)
+  - [When the formula is generated](#when-the-formula-is-generated)
+  - [When the formula is pushed](#when-the-formula-is-pushed)
+  - [Flag summary](#flag-summary)
+- [Installation](#installation)
+  - [Download](#download)
+  - [Verify Checksum](#verify-checksum)
+  - [Extract](#extract)
+  - [Install](#install)
+  - [Installing using Homebrew on Mac/Linux](#installing-using-homebrew-on-mac-linux)
+    - [Install](#install)
+    - [Upgrade](#upgrade)
+    - [Uninstall](#uninstall)
+    - [Remove the tap](#remove-the-tap)
+  - [Building from source](#building-from-source)
+- [How to use](#how-to-use)
+- [Example](#example)
+  - [Legacy mode (single binary)](#legacy-mode-single-binary)
+  - [Multi-binary mode](#multi-binary-mode)
   - [Multi-Binary Configuration](#multi-binary-configuration)
   - [Output Structure](#output-structure)
   - [Included Files](#included-files)
   - [Config file for single binary project](#config-file-for-single-binary-project)
-  - [How to release your project to github (Any kind, not just golang based projects)](#how-to-release-your-project-to-github-any-kind-not-just-golang-based-projects)
-  - [Contributing](#contributing)
-  - [License](#license)
-  - [Authors](#authors)
+- [How to release your project to github (Any kind, not just golang based projects)](#how-to-release-your-project-to-github-any-kind-not-just-golang-based-projects)
+- [Contributing](#contributing)
+- [License](#license)
+- [Authors](#authors)
 
-## Introduction
+# Introduction
 
-A multi-platform program to cross compile 
-[go](https://go.dev/) projects without the complexity of [GoReleaser](https://goreleaser.com/).
+A cross-platform program to cross compile 
+[Go](https://go.dev/) projects without the complexity of [GoReleaser](https://goreleaser.com/).
 The program can be used to:
 
 - Cross compile go projects for various platforms - with ease
@@ -40,23 +45,26 @@ The program can be used to:
 just copy the assets to `./bin` directory. Please look at Look at [How to release your project to github](#how-to-release-your-project-to-github-any-kind-not-just-golang-based-projects) for details.
 
 
-## Background and Motivation
+# Background and Motivation
 
-It was written from the frustration of using [GoReleaser](https://goreleaser.com/). I don't 
-release often, whenever the time comes to release using GoReleaser, 
-something has changed.
-I got tired of dealing with GoReleaser's complexity when I only release
-software occasionally. When I release every 6-12 months or so, GoReleaser's
-config often needs updates due to changes. This simple program just works. 
+It was written from the frustration of using [GoReleaser](https://goreleaser.com/). I don't
+release software often, every 6 to 12 months or so, and by the time
+I need to release again, something about GoReleaser's config has
+changed and needs updating.
+
+I'd rather own a simple tool I understand fully than fight with
+someone else's. If something breaks in `go-xbuild-go`, I can just fix
+it myself.
+
 Hope you will find it useful and fun to use.
 
-This is a [go](https://go.dev/) port of my bash script https://github.com/muquit/go-xbuild
+This is a [Go](https://go.dev/) port of my bash script https://github.com/muquit/go-xbuild
 
 Pull requests, suggestions are always welcome.
 
 
 
-## Features
+# Features
 - Simple to use and maintain
 - Cross compile for multiple platforms
 - **NEW in v1.0.5**: Multi-binary project support with JSON configuration
@@ -71,9 +79,9 @@ Pull requests, suggestions are always welcome.
 - Make release of the project to github
 - Full backward compatibility - existing projects work unchanged
 
-## Synopsis
+# Synopsis
 ```
-go-xbuild-go v1.0.8
+go-xbuild-go v1.0.9
 A program to cross compile go programs and release any software to github
 
 Usage:
@@ -129,16 +137,77 @@ A minimal example config file (build-config.json):
 }
 ```
 
-## Latest Version (v1.0.8)
-The current version is v1.0.8
+# Latest Version (v1.0.9)
+The current version is v1.0.9
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
-## Installation
+# Homebrew Formula Generation
 
-### 1. Download
+`go-xbuild-go` can generate a [Homebrew](https://brew.sh/) formula for your project and write it to
+a per-project `Formula/<project>.rb` file. It also generates `docs/brew_install.md`
+with ready-to-use tap/install/upgrade/uninstall instructions for that project.
+
+## When the formula is generated
+
+The formula is generated at the end of the **build** phase (`GenerateFormula`,
+called from `internal/brew/brew.go`), every time `go-xbuild-go` runs a build,
+**unless** one of these flags is set:
+
+- `-skip-brew`: skip formula generation entirely.
+- `-skip-brew-push`: also causes generation to be skipped (see note below).
+
+Generation requires:
+
+- A `VERSION` file (or whatever `version_file` is configured) to determine the
+  formula version.
+- A git remote pointing at a `github.com` repo (`git remote get-url origin`),
+  used to derive the `homepage` and the release asset URLs. Generation fails
+  if the remote isn't a [GitHub](https://github.com/) URL.
+- A checksums file in `bin/` (`<project>-<version>-<checksums-file>`) produced
+  by the build/archive step, listing the `.tar.gz` archives and their SHA-256
+  sums. Only `darwin`/`linux` `.tar.gz` archives are used (Windows archives and
+  the Raspberry Pi archive are excluded from the formula).
+
+On success it writes:
+
+- `Formula/<project>.rb`: the [Homebrew](https://brew.sh/) formula (marked `DO NOT EDIT`, regenerated
+  every run).
+- `docs/brew_install.md`: [Homebrew](https://brew.sh/) install/upgrade/uninstall instructions for
+  the project, suitable for inclusion in `docs/main.md` via
+  `@[:markdown](brew_install.md)`.
+
+A best-effort license string (MIT, Apache-2.0, GPL-2.0/3.0, BSD-2/3-Clause) is
+detected from a `LICENSE*` file in the project root and included in the formula
+if found.
+
+## When the formula is pushed
+
+Pushing (`PushFormula`) happens at the end of the **release** phase (`-release`),
+and commits and pushes `Formula/<project>.rb` to the current git repo, unless:
+
+- `-skip-brew-push` is set: push is skipped.
+- The formula file is unchanged since the last commit (`git status --porcelain`
+  reports nothing): push is skipped with a message, since there's nothing new
+  to commit.
+
+If `Formula/<project>.rb` doesn't exist when `-release` runs (e.g. because the
+build step was skipped or `-skip-brew` was used), the push step fails: the
+formula must be generated by a prior build before it can be pushed.
+
+## Flag summary
+
+| Flag | Effect |
+|---|---|
+| `-skip-brew` | Don't generate `Formula/<project>.rb` or `docs/brew_install.md` during build. |
+| `-skip-brew-push` | Generation is skipped too (build phase), and the release phase won't commit/push the formula. |
+| `-brew-desc` | Sets the `desc` field in the generated formula. |
+
+# Installation
+
+## Download
 * Download the appropriate archive for your platform from the [Releases](https://github.com/muquit/go-xbuild-go/releases) page
 
-### 2. Verify Checksum
+## Verify Checksum
 
 ```bash
 # Download the checksums file
@@ -147,7 +216,7 @@ sha256sum -c go-xbuild-go-vX.X.X-darwin-arm64.d.tar.gz
 ```
 Repeat the step for other archives
 
-### 3. Extract
+## Extract
 macOS/Linux:
 
 ```bash
@@ -163,7 +232,7 @@ The tar command is available in Windows 10 (1803) and later, or you can
 use the GUI (right-click → Extract All). After extracting, copy/rename the
 binary somewhere in your PATH.
 
-### 4. Install
+## Install
 
 ```bash
 # macOS/Linux
@@ -176,38 +245,40 @@ sudo chmod +x /usr/local/bin/go-xbuild-go
 copy go-xbuild-go-vX.X.X-windows-amd64.exe C:\Windows\System32\go-xbuild-go.exe
 ```
 
-### Installing using Homebrew on Mac
+## Installing using Homebrew on Mac/Linux
 
-You will need to install [Homebrew](https://brew.sh/) first
+You will need to install [Homebrew](https://brew.sh/) first.
 
-#### Installing
+### Install
 
-Install the custom tap.
+First install the custom tap.
 
 ```
 brew tap muquit/go-xbuild-go https://github.com/muquit/go-xbuild-go.git
 brew install go-xbuild-go
 ```
 
-#### Updating
+Or tap and install in one command:
+```
+brew install muquit/go-xbuild-go/go-xbuild-go
+```
 
+### Upgrade
 ```
 brew upgrade go-xbuild-go
 ```
 
-#### Uninstalling
-
+### Uninstall
 ```
 brew uninstall go-xbuild-go
 ```
 
-To remove the tap:
-
+### Remove the tap
 ```
 brew untap muquit/go-xbuild-go
 ```
 
-### Building from source
+## Building from source
 
 Install [Go](https://go.dev/) first
 
@@ -215,14 +286,13 @@ Install [Go](https://go.dev/) first
 git clone https://github.com/muquit/go-xbuild-go
 cd go-xbuild-go
 go build .
-or 
+or
 make build
 ```
 
 Please look at [Makefile](Makefile) for more info
 
-
-## How to use
+# How to use
 
 There are two ways to use go-xbuild-go:
 
@@ -262,9 +332,9 @@ linux/amd64
 ...
 ```
 
-## Example
+# Example
 
-### Legacy mode (single binary)
+## Legacy mode (single binary)
 Run go-xbuild-go from the root of your project. Update VERSION file if needed.
 Then, compile the binaries:
 
@@ -280,7 +350,7 @@ The program will:
 5. Generate checksums for all archives
 6. Place all artifacts in _./bin_ directory
 
-### Multi-binary mode
+## Multi-binary mode
 For projects with multiple main packages (e.g., `cmd/cli/`, `cmd/server/`), create a `build-config.json` file and run:
 
 ```bash
@@ -409,7 +479,7 @@ project as well. Example for `go-xbuild-go` itself:
 ```
 
 
-## How to release your project to github (Any kind, not just golang based projects)
+# How to release your project to github (Any kind, not just golang based projects)
 
 Now that you cross-compiled and created archives for your go project, you 
 can use go-xbuild-go to publish it to GitHub.  Note: any project can be 
@@ -455,15 +525,15 @@ To make a formatted release note, create a file `release_notes.md`. By default, 
 go-xbuild-go -release
 ```
 
-## Contributing
+# Contributing
 Pull requests welcome! Please keep it simple.
 
-## License
+# License
 MIT License - See [LICENSE](LICENSE) file for details.
 
-## Authors
-Developed with [Claude AI Sonnet 4/4.5](https://claude.ai), working under my guidance and instructions.
+# Authors
+Developed with [Claude AI Sonnet 4/4.5](https://claude.ai), [Claude Code](https://code.claude.com/docs/en/overview)
 
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on May-17-2026</sub>
+<sub>TOC/glossary expansion by https://github.com/muquit/markdown-toc-go v1.0.5 on Jun-21-2026</sub>

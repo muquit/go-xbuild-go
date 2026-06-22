@@ -1,4 +1,4 @@
-## Included Files
+# Included Files
 The following files will be included in archives if they exist:
 - Compiled binary
 - README.md

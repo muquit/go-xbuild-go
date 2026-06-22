@@ -1,4 +1,4 @@
-## Introduction
+# Introduction
 
 A multi-platform program to cross compile 
 [go](https://go.dev/) projects without the complexity of [GoReleaser](https://goreleaser.com/).
@@ -10,7 +10,7 @@ The program can be used to:
 just copy the assets to `./bin` directory. Please look at Look at [How to release
 your project to github](#how-to-release-your-project-to-github) for details.
 
-## Background and Motivation
+# Background and Motivation
 
 It was written from the frustration of using [GoReleaser](https://goreleaser.com/). I don't 
 release often, whenever the time comes to release using GoReleaser, 
@@ -25,7 +25,7 @@ This is a [go](https://go.dev/) port of my bash script https://github.com/muquit
 Pull requests, suggestions are always welcome.
 
 
-## How to use
+# How to use
 
 There are two ways to use go-xbuild-go:
 
@@ -65,7 +65,7 @@ linux/amd64
 ...
 ```
 
-## Features
+# Features
 - Simple to use and maintain
 - Cross compile for multiple platforms
 - **NEW in v1.0.5**: Multi-binary project support with JSON configuration
@@ -80,7 +80,7 @@ linux/amd64
 - Make release of the project to github
 - Full backward compatibility - existing projects work unchanged
 
-## Synopsis
+# Synopsis
 
 ```
 ./go-xbuild-go v1.0.5
@@ -150,14 +150,14 @@ Example build-config.json for multi-main project:
 }
 ```
 
-## Version
+# Version
 The current version is 1.0.5
 
 Please look at [ChangeLog](ChangeLog.md) for what has changed in the current version.
 
-## Installation
+# Installation
 
-### Download
+## Download
 
 Download pre-compiled binaries from
 [Releases](https://github.com/muquit/go-xbuild-go/releases) page
@@ -165,7 +165,7 @@ Download pre-compiled binaries from
 Please look at [How to use](#how-to-use) 
 
 
-### Building from source
+## Building from source
 
 Install [go](https://go.dev/) first
 
@@ -179,9 +179,9 @@ make build
 Please look at [How to use](#how-to-use) 
 
 
-## Usage
+# Usage
 
-### Legacy mode (single binary)
+## Legacy mode (single binary)
 Run go-xbuild-go from the root of your project. Update VERSION file if needed.
 Then, compile the binaries:
 
@@ -197,7 +197,7 @@ The program will:
 5. Generate checksums for all archives
 6. Place all artifacts in _./bin_ directory
 
-### Multi-binary mode
+## Multi-binary mode
 For projects with multiple main packages (e.g., `cmd/cli/`, `cmd/server/`), create a `build-config.json` file and run:
 
 ```bash
@@ -211,7 +211,7 @@ go-xbuild-go -config build-config.json
 go-xbuild-go -release -release-note "Multi-binary release"
 ```
 
-## Multi-Binary Configuration
+# Multi-Binary Configuration
 
 The JSON configuration file supports the following structure:
 
@@ -274,7 +274,7 @@ myproject/
 
 For a complete working example, see: [go-multi-main-example](https://github.com/muquit/go-multi-main-example)
 
-## Output Structure
+# Output Structure
 
 ```
 bin/
@@ -287,7 +287,7 @@ bin/
 └── project-v1.0.1-checksums.txt
 ```
 
-## Included Files
+# Included Files
 The following files will be included in archives if they exist:
 - Compiled binary
 - README.md
@@ -296,7 +296,7 @@ The following files will be included in archives if they exist:
 - platforms.txt
 - Add extra files with `-additional-files` (Do not add these default: README.md, LICENSE.txt, LICENSE, platforms.txt, <project>.1)
 
-## How to release your project to github (Any kind, not just golang based projects)
+# How to release your project to github (Any kind, not just golang based projects)
 
 Now that you cross-compiled and created archives for your go project, you 
 can use go-xbuild-go to publish it to GitHub.  Note: any project can be 
@@ -343,11 +343,11 @@ go-xbuild-go -release
 ```
 
 
-## Contributing
+# Contributing
 Pull requests welcome! Please keep it simple.
 
-## License
+# License
 MIT License - See LICENSE file for details.
 
-## Author
+# Author
 Developed with Claude AI Sonnet 4, working under my guidance and instructions.

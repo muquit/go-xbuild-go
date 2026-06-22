@@ -1,4 +1,4 @@
-## Features
+# Features
 - Simple to use and maintain
 - Cross compile for multiple platforms
 - **NEW in v1.0.5**: Multi-binary project support with JSON configuration

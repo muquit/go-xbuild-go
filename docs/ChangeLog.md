@@ -1,3 +1,16 @@
+# v1.0.9
+- Fixed zip/tar.gz archives extracting flat instead of into a named directory
+  - A refactor in Oct-2025 (splitting `main.go` into `internal/build/build.go`)
+  changed how archive entry paths were computed, dropping the dist directory
+  name as a prefix
+  - Since then, extracting a release archive (e.g.
+  `go-xbuild-go-v1.0.8-windows-amd64.d.zip`) dumped files into the current
+  directory instead of creating `go-xbuild-go-v1.0.8-windows-amd64.d/` and
+  placing files inside it
+  - Archive entries are now correctly nested under the dist directory name again
+
+(Jun-17-2026)
+
 # v1.0.8
 - Generate @HOMEBREW@ formula in `Formula/` directory.
 

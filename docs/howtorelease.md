@@ -1,4 +1,4 @@
-## How to release your project to github (Any kind, not just golang based projects)
+# How to release your project to github (Any kind, not just golang based projects)
 
 Now that you cross-compiled and created archives for your go project, you 
 can use go-xbuild-go to publish it to GitHub.  Note: any project can be 

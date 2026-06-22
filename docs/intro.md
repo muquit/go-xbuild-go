@@ -1,7 +1,7 @@
-## Introduction
+# Introduction
 
-A multi-platform program to cross compile 
-[go](https://go.dev/) projects without the complexity of [GoReleaser](https://goreleaser.com/).
+A cross-platform program to cross compile 
+@GO@ projects without the complexity of [GoReleaser](https://goreleaser.com/).
 The program can be used to:
 
 - Cross compile go projects for various platforms - with ease

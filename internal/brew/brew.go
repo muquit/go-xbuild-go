@@ -379,20 +379,39 @@ func writeBrewInstallDoc(project, tapName, tapURL string) error {
 		return fmt.Errorf("failed to create docs directory: %v", err)
 	}
 
-	content := fmt.Sprintf(`### Install
+	content := fmt.Sprintf(`## Installing using Homebrew on Mac/Linux
+
+You will need to install [Homebrew](https://brew.sh/) first.
+
+### Install
 
 First install the custom tap.
 
 `+"```"+`
-    $ brew tap %s %s
-    $ brew install %s
+brew tap %s %s
+brew install %s
+`+"```"+`
+
+Or tap and install in one command:
+`+"```"+`
+brew install %s/%s
+`+"```"+`
+
+### Upgrade
+`+"```"+`
+brew upgrade %s
 `+"```"+`
 
 ### Uninstall
 `+"```"+`
-    $ brew uninstall %s
+brew uninstall %s
 `+"```"+`
-`, tapName, tapURL, project, project)
+
+### Remove the tap
+`+"```"+`
+brew untap %s
+`+"```"+`
+`, tapName, tapURL, project, tapName, project, project, project, tapName)
 
 	outFile := filepath.Join(docsDir, "brew_install.md")
 	if err := os.WriteFile(outFile, []byte(content), 0644); err != nil {

@@ -16,6 +16,8 @@ VF=./docs/version.md
 BADGEF=./docs/badges.md
 MAIN_MD=docs/main.md
 
+.PHONY: all build build_all doc gen_files gen_synopsis ver release check_github_token clean
+
 all: build build_all doc
 
 build:
@@ -39,13 +41,13 @@ doc: gen_files
 gen_files: gen_synopsis ver
 
 gen_synopsis: build
-	echo '## Synopsis' > $(SF)
+	echo '# Synopsis' > $(SF)
 	echo '```' >> $(SF)
 	$(BINARY) -h >> $(SF) 2>&1
 	echo '```' >> $(SF)
 
 ver:
-	echo "## Latest Version ($(VERSION))" > $(VF)
+	echo "# Latest Version ($(VERSION))" > $(VF)
 	echo "The current version is $(VERSION)" >> $(VF)
 	echo "Please look at @CHANGELOG@ for what has changed in the current version.">> $(VF)
 
@@ -58,6 +60,13 @@ ver:
 release:
 	@echo "*** Releasing on github ..."
 	$(BINARY) -release
+
+# check if GITHUB_TOKEN is valid
+check_github_token:
+	@curl -s -H "Authorization: token $(GITHUB_TOKEN)" \
+        https://api.github.com/user | jq '{login, name, type}'
+	@curl -sI -H "Authorization: token $(GITHUB_TOKEN)" \
+        https://api.github.com/user | grep -i x-oauth-scopes
 
 clean:
 	/bin/rm -f $(BINARY)

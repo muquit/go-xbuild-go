@@ -1,2 +1,2 @@
-## Authors
-Developed with @CLAUDE@, working under my guidance and instructions.
+# Authors
+Developed with @CLAUDE@, @CLAUDE_CODE@

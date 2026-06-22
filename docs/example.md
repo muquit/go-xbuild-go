@@ -1,6 +1,6 @@
-## Example
+# Example
 
-### Legacy mode (single binary)
+## Legacy mode (single binary)
 Run go-xbuild-go from the root of your project. Update VERSION file if needed.
 Then, compile the binaries:
 
@@ -16,7 +16,7 @@ The program will:
 5. Generate checksums for all archives
 6. Place all artifacts in _./bin_ directory
 
-### Multi-binary mode
+## Multi-binary mode
 For projects with multiple main packages (e.g., `cmd/cli/`, `cmd/server/`), create a `build-config.json` file and run:
 
 ```bash

@@ -1,12 +1,26 @@
-## Table Of Contents
-- [v1.0.8](#v108)
-- [v1.0.7](#v107)
-- [v1.0.6](#v106)
-- [v1.0.5](#v105)
-- [v1.0.4](#v104)
-- [v1.0.3](#v103)
-- [v1.0.2](#v102)
-- [v1.0.1](#v101)
+# Table Of Contents
+- [v1.0.9](#v1-0-9)
+- [v1.0.8](#v1-0-8)
+- [v1.0.7](#v1-0-7)
+- [v1.0.6](#v1-0-6)
+- [v1.0.5](#v1-0-5)
+- [v1.0.4](#v1-0-4)
+- [v1.0.3](#v1-0-3)
+- [v1.0.2](#v1-0-2)
+- [v1.0.1](#v1-0-1)
+
+# v1.0.9
+- Fixed zip/tar.gz archives extracting flat instead of into a named directory
+  - A refactor in Oct-2025 (splitting `main.go` into `internal/build/build.go`)
+  changed how archive entry paths were computed, dropping the dist directory
+  name as a prefix
+  - Since then, extracting a release archive (e.g.
+  `go-xbuild-go-v1.0.8-windows-amd64.d.zip`) dumped files into the current
+  directory instead of creating `go-xbuild-go-v1.0.8-windows-amd64.d/` and
+  placing files inside it
+  - Archive entries are now correctly nested under the dist directory name again
+
+(Jun-17-2026)
 
 # v1.0.8
 - Generate [Homebrew](https://brew.sh/) formula in `Formula/` directory.
