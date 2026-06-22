@@ -37,6 +37,14 @@ A best-effort license string (MIT, Apache-2.0, GPL-2.0/3.0, BSD-2/3-Clause) is
 detected from a `LICENSE*` file in the project root and included in the formula
 if found.
 
+### Trusting the tap (@HOMEBREW@ 6.0+)
+
+@HOMEBREW@ 6.0+ refuses to load formulae from third-party taps until the tap is
+explicitly trusted, failing with `Refusing to load formula ... from untrusted
+tap ...`. The generated `docs/brew_install.md` and the console instructions
+printed after a build both include a `brew trust <tap>` step between `brew tap`
+and `brew install` to cover this.
+
 ## When the formula is pushed
 
 Pushing (`PushFormula`) happens at the end of the **release** phase (`-release`),

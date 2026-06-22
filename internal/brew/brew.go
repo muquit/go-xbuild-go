@@ -368,6 +368,7 @@ func findPlatform(platforms []platformEntry, goos, goarch string) *platformEntry
 func printBrewInstructions(project, tapName, tapURL string) {
 	fmt.Printf("\nHomebrew install instructions for %s:\n", project)
 	fmt.Printf("  brew tap %s %s\n", tapName, tapURL)
+	fmt.Printf("  brew trust %s\n", tapName)
 	fmt.Printf("  brew install %s\n", project)
 	fmt.Printf("\nTo uninstall:\n")
 	fmt.Printf("  brew uninstall %s\n", project)
@@ -385,15 +386,19 @@ You will need to install [Homebrew](https://brew.sh/) first.
 
 ### Install
 
-First install the custom tap.
+First install the custom tap, then trust it. Homebrew 6.0+ refuses to load
+formulae from third-party taps until they are explicitly trusted.
 
 `+"```"+`
 brew tap %s %s
+brew trust %s
 brew install %s
 `+"```"+`
 
-Or tap and install in one command:
+Or tap, trust and install in one go:
 `+"```"+`
+brew tap %s %s
+brew trust %s
 brew install %s/%s
 `+"```"+`
 
@@ -411,7 +416,7 @@ brew uninstall %s
 `+"```"+`
 brew untap %s
 `+"```"+`
-`, tapName, tapURL, project, tapName, project, project, project, tapName)
+`, tapName, tapURL, tapName, project, tapName, tapURL, tapName, tapName, project, project, project, tapName)
 
 	outFile := filepath.Join(docsDir, "brew_install.md")
 	if err := os.WriteFile(outFile, []byte(content), 0644); err != nil {

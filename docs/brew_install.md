@@ -4,15 +4,19 @@ You will need to install [Homebrew](https://brew.sh/) first.
 
 ### Install
 
-First install the custom tap.
+First install the custom tap, then trust it. Homebrew 6.0+ refuses to load
+formulae from third-party taps until they are explicitly trusted.
 
 ```
 brew tap muquit/go-xbuild-go https://github.com/muquit/go-xbuild-go.git
+brew trust muquit/go-xbuild-go
 brew install go-xbuild-go
 ```
 
-Or tap and install in one command:
+Or tap, trust and install in one go:
 ```
+brew tap muquit/go-xbuild-go https://github.com/muquit/go-xbuild-go.git
+brew trust muquit/go-xbuild-go
 brew install muquit/go-xbuild-go/go-xbuild-go
 ```
 

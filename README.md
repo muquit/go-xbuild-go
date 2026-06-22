@@ -7,6 +7,7 @@
 - [Latest Version (v1.0.9)](#latest-version-v109)
 - [Homebrew Formula Generation](#homebrew-formula-generation)
   - [When the formula is generated](#when-the-formula-is-generated)
+    - [Trusting the tap ([Homebrew](https://brew.sh/) 6.0+)](#trusting-the-tap-homebrewhttpsbrewsh-60)
   - [When the formula is pushed](#when-the-formula-is-pushed)
   - [Flag summary](#flag-summary)
 - [Installation](#installation)
@@ -180,6 +181,14 @@ A best-effort license string (MIT, Apache-2.0, GPL-2.0/3.0, BSD-2/3-Clause) is
 detected from a `LICENSE*` file in the project root and included in the formula
 if found.
 
+### Trusting the tap ([Homebrew](https://brew.sh/) 6.0+)
+
+[Homebrew](https://brew.sh/) 6.0+ refuses to load formulae from third-party taps until the tap is
+explicitly trusted, failing with `Refusing to load formula ... from untrusted
+tap ...`. The generated `docs/brew_install.md` and the console instructions
+printed after a build both include a `brew trust <tap>` step between `brew tap`
+and `brew install` to cover this.
+
 ## When the formula is pushed
 
 Pushing (`PushFormula`) happens at the end of the **release** phase (`-release`),
@@ -251,15 +260,19 @@ You will need to install [Homebrew](https://brew.sh/) first.
 
 ### Install
 
-First install the custom tap.
+First install the custom tap, then trust it. Homebrew 6.0+ refuses to load
+formulae from third-party taps until they are explicitly trusted.
 
 ```
 brew tap muquit/go-xbuild-go https://github.com/muquit/go-xbuild-go.git
+brew trust muquit/go-xbuild-go
 brew install go-xbuild-go
 ```
 
-Or tap and install in one command:
+Or tap, trust and install in one go:
 ```
+brew tap muquit/go-xbuild-go https://github.com/muquit/go-xbuild-go.git
+brew trust muquit/go-xbuild-go
 brew install muquit/go-xbuild-go/go-xbuild-go
 ```
 
@@ -536,4 +549,4 @@ Developed with [Claude AI Sonnet 4/4.5](https://claude.ai), [Claude Code](https:
 
 
 ---
-<sub>TOC/glossary expansion by https://github.com/muquit/markdown-toc-go dev on Jun-21-2026</sub>
+<sub>TOC/glossary expansion by https://github.com/muquit/markdown-toc-go v1.0.5 on Jun-21-2026</sub>
