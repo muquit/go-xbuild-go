@@ -4,7 +4,7 @@
 - [Background and Motivation](#background-and-motivation)
 - [Features](#features)
 - [Synopsis](#synopsis)
-- [Latest Version (v1.0.9)](#latest-version-v1-0-9)
+- [Latest Version (v1.0.9)](#latest-version-v109)
 - [Homebrew Formula Generation](#homebrew-formula-generation)
   - [When the formula is generated](#when-the-formula-is-generated)
   - [When the formula is pushed](#when-the-formula-is-pushed)
@@ -14,7 +14,7 @@
   - [Verify Checksum](#verify-checksum)
   - [Extract](#extract)
   - [Install](#install)
-  - [Installing using Homebrew on Mac/Linux](#installing-using-homebrew-on-mac-linux)
+  - [Installing using Homebrew on Mac/Linux](#installing-using-homebrew-on-maclinux)
     - [Install](#install)
     - [Upgrade](#upgrade)
     - [Uninstall](#uninstall)
@@ -536,4 +536,4 @@ Developed with [Claude AI Sonnet 4/4.5](https://claude.ai), [Claude Code](https:
 
 
 ---
-<sub>TOC/glossary expansion by https://github.com/muquit/markdown-toc-go v1.0.5 on Jun-21-2026</sub>
+<sub>TOC/glossary expansion by https://github.com/muquit/markdown-toc-go dev on Jun-21-2026</sub>
