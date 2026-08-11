@@ -533,4 +533,4 @@ Developed with [Claude AI Sonnet 4/4.5](https://claude.ai), [Claude Code](https:
 
 
 ---
-<sub>TOC is created by https://github.com/muquit/markdown-toc-go on Aug-10-2026</sub>
+<sub>TOC/glossary expansion by https://github.com/muquit/markdown-toc-go v1.0.5 on Aug-10-2026</sub>
