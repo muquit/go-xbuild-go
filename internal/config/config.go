@@ -27,7 +27,8 @@ type ProjectConfig struct {
 	DefaultBuildFlags     string        `json:"default_build_flags"`
 	GlobalAdditionalFiles []string      `json:"global_additional_files"`
 	Targets               []BuildTarget `json:"targets"`
-	BrewDesc 			   string 		`json:"brew_desc"`
+	BrewDesc              string        `json:"brew_desc"`
+	BrewExtraBinFiles     []string      `json:"brew_extra_bin_files"`
 }
 
 // Config holds all configuration for the build process.
@@ -42,9 +43,10 @@ type Config struct {
 	AdditionalFiles []string
 	ProjectConfig   *ProjectConfig // New: multi-target config
 	ExtraBuildArgs  []string
-	BrewDesc     string
-	SkipBrew     bool
-	SkipBrewPush bool
+	BrewDesc          string
+	BrewExtraBinFiles []string
+	SkipBrew          bool
+	SkipBrewPush      bool
 }
 
 // LoadProjectConfig loads a project configuration from a JSON file.

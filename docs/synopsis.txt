@@ -1,6 +1,6 @@
 # Synopsis
 ```
-go-xbuild-go v1.0.9
+go-xbuild-go v1.0.10
 A program to cross compile go programs and release any software to github
 
 Usage:
@@ -13,6 +13,8 @@ Options:
     	Comma-separated list of additional files to include
   -brew-desc string
     	Description for Homebrew formula
+  -brew-extra-bin-files string
+    	Comma-separated list of extra files to install into bin (e.g., 'foo.sh,other-tool')
   -build-args string
     	Additional go build arguments (e.g., '-tags systray')
   -config string

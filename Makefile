@@ -16,7 +16,7 @@ VF=./docs/version.md
 BADGEF=./docs/badges.md
 MAIN_MD=docs/main.md
 
-.PHONY: all build build_all doc gen_files gen_synopsis ver release check_github_token clean
+.PHONY: all build build_all doc docs gen_files gen_synopsis ver release check_github_token clean
 
 all: build build_all doc
 
@@ -36,6 +36,8 @@ doc: gen_files
 	@touch $(README)
 	$(MARKDOWN_TOC_PROG) -i $(MAIN_MD) -o $(README) --glossary ${GLOSSARY_FILE} -pre-toc-file $(BADGEF) -f
 	$(MARKDOWN_TOC_PROG) -i docs/ChangeLog.md -o ./ChangeLog.md --glossary docs/glossary.txt -f -no-credit
+
+docs: doc
 
 
 gen_files: gen_synopsis ver

@@ -1,4 +1,4 @@
-# Release v1.0.9
+# Release v1.0.10
 
 Bug fixes and improvements.
 

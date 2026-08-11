@@ -350,6 +350,9 @@ func buildFormulaContent(cfg *config.Config, version, homepage, license string, 
 		sb.WriteString("    end\n")
 	}
 
+	for _, f := range cfg.BrewExtraBinFiles {
+		sb.WriteString(fmt.Sprintf("    bin.install \"%s\"\n", f))
+	}
 	sb.WriteString("  end\n")
 	sb.WriteString("end\n")
 

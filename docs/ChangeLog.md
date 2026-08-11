@@ -1,3 +1,11 @@
+# v1.0.10
+- Add flag `-brew-extra-bin-files` to specify comma-separated list of 
+extra files to install into bin (e.g., 'foo.sh,other-tool') to be added in
+@HOMEBREW@ formula file.
+
+(Aug-10-2026)
+
+
 # v1.0.9
 - Fixed zip/tar.gz archives extracting flat instead of into a named directory
   - A refactor in Oct-2025 (splitting `main.go` into `internal/build/build.go`)

@@ -34,10 +34,11 @@ func main() {
 		releaseNoteFile string
 		buildArgs       string
 		additionalFiles string
-		platformsFile   string
-	    brewDesc        string
-		skipBrew        bool
-		skipBrewPush    bool
+		platformsFile     string
+		brewDesc          string
+		brewExtraBinFiles string
+		skipBrew          bool
+		skipBrewPush      bool
 	)
 
 	flag.StringVar(&buildArgs, "build-args", "", "Additional go build arguments (e.g., '-tags systray')")
@@ -52,6 +53,7 @@ func main() {
 	flag.StringVar(&platformsFile, "platforms-file", "platforms.txt", "Path of platforms.txt")
 	flag.BoolVar(&listTargets, "list-targets", false, "List available build targets and exit")
 	flag.StringVar(&brewDesc, "brew-desc", "", "Description for Homebrew formula")
+	flag.StringVar(&brewExtraBinFiles, "brew-extra-bin-files", "", "Comma-separated list of extra files to install into bin (e.g., 'foo.sh,other-tool')")
 	flag.BoolVar(&skipBrew, "skip-brew", false, "Skip Homebrew formula generation")
 	flag.BoolVar(&skipBrewPush, "skip-brew-push", false, "Skip Homebrew formula push on release")
 
@@ -119,9 +121,9 @@ func main() {
 		VersionFile:   filepath.Join(myDir, "VERSION"),
 		PlatformsFile: platformsFile,
 		ChecksumsFile: "checksums.txt", 
-	    BrewDesc:      brewDesc,
-    	SkipBrew:      skipBrew,
-    	SkipBrewPush:  skipBrewPush,
+		BrewDesc:      brewDesc,
+		SkipBrew:      skipBrew,
+		SkipBrewPush:  skipBrewPush,
 	}
 
 	if configFile != "" {
@@ -135,6 +137,9 @@ func main() {
 		}
 		if projectConfig.PlatformsFile != "" {
 			cfg.PlatformsFile = projectConfig.PlatformsFile
+		}
+		if len(projectConfig.BrewExtraBinFiles) > 0 {
+			cfg.BrewExtraBinFiles = projectConfig.BrewExtraBinFiles
 		}
 	}
 
@@ -150,6 +155,13 @@ func main() {
 		cfg.AdditionalFiles = strings.Split(additionalFiles, ",")
 		for i := range cfg.AdditionalFiles {
 			cfg.AdditionalFiles[i] = strings.TrimSpace(cfg.AdditionalFiles[i])
+		}
+	}
+
+	if brewExtraBinFiles != "" {
+		cfg.BrewExtraBinFiles = strings.Split(brewExtraBinFiles, ",")
+		for i := range cfg.BrewExtraBinFiles {
+			cfg.BrewExtraBinFiles[i] = strings.TrimSpace(cfg.BrewExtraBinFiles[i])
 		}
 	}
 

@@ -1,4 +1,5 @@
 # Table Of Contents
+- [v1.0.10](#v1010)
 - [v1.0.9](#v109)
 - [v1.0.8](#v108)
 - [v1.0.7](#v107)
@@ -8,6 +9,14 @@
 - [v1.0.3](#v103)
 - [v1.0.2](#v102)
 - [v1.0.1](#v101)
+
+# v1.0.10
+- Add flag `-brew-extra-bin-files` to specify comma-separated list of 
+extra files to install into bin (e.g., 'foo.sh,other-tool') to be added in
+[Homebrew](https://brew.sh/) formula file.
+
+(Aug-10-2026)
+
 
 # v1.0.9
 - Fixed zip/tar.gz archives extracting flat instead of into a named directory
