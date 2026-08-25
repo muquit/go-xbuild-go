@@ -1,4 +1,5 @@
 # Table Of Contents
+- [v1.0.11](#v1011)
 - [v1.0.10](#v1010)
 - [v1.0.9](#v109)
 - [v1.0.8](#v108)
@@ -9,6 +10,17 @@
 - [v1.0.3](#v103)
 - [v1.0.2](#v102)
 - [v1.0.1](#v101)
+
+# v1.0.11
+- Simplified the generated Homebrew install instructions
+  (`docs/brew_install.md`) and console output back down to a two-line
+  `brew tap` + `brew install`, dropping the `brew trust <tap>` step added in
+  v1.0.9
+- Added a short note to the generated `docs/brew_install.md` explaining that
+  the formula is written to the project's own `Formula/project.rb` rather
+  than a central Homebrew tap repo
+
+(Aug-25-2026)
 
 # v1.0.10
 - Add flag `-brew-extra-bin-files` to specify comma-separated list of 

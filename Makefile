@@ -59,9 +59,12 @@ ver:
 #  - to check VERSION file
 #  - run 'make build_all' before release
 #  - release_notes.md exists in cwd
-release: check_github_token
+release: check_github_token gen_release_notes
 	@echo "*** Releasing on github ..."
 	$(BINARY) -release
+
+gen_release_notes:
+	./scripts/mk_release_notes.sh
 
 # check if GITHUB_TOKEN is set and valid, fail the build otherwise
 check_github_token:
