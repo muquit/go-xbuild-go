@@ -6,13 +6,13 @@ See [ChangeLog.md](ChangeLog.md) for details about this release.
 
 | OS | Archive | Size (bytes) |
 |---|---|---:|
-| macOS | [go-xbuild-go-v1.0.11-darwin-amd64.d.tar.gz](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-darwin-amd64.d.tar.gz) | 1570498 |
+| macOS | [go-xbuild-go-v1.0.11-darwin-amd64.d.tar.gz](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-darwin-amd64.d.tar.gz) | 1570495 |
 | macOS | [go-xbuild-go-v1.0.11-darwin-arm64.d.tar.gz](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-darwin-arm64.d.tar.gz) | 1444948 |
-| Linux | [go-xbuild-go-v1.0.11-linux-amd64.d.tar.gz](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-linux-amd64.d.tar.gz) | 1584937 |
+| Linux | [go-xbuild-go-v1.0.11-linux-amd64.d.tar.gz](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-linux-amd64.d.tar.gz) | 1584938 |
 | Linux | [go-xbuild-go-v1.0.11-linux-arm.d.tar.gz](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-linux-arm.d.tar.gz) | 1488555 |
-| Linux | [go-xbuild-go-v1.0.11-linux-arm64.d.tar.gz](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-linux-arm64.d.tar.gz) | 1431476 |
+| Linux | [go-xbuild-go-v1.0.11-linux-arm64.d.tar.gz](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-linux-arm64.d.tar.gz) | 1431475 |
 | raspberry | [go-xbuild-go-v1.0.11-raspberry-pi-jessie.d.tar.gz](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-raspberry-pi-jessie.d.tar.gz) | 1494029 |
-| raspberry | [go-xbuild-go-v1.0.11-raspberry-pi.d.tar.gz](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-raspberry-pi.d.tar.gz) | 1488557 |
+| raspberry | [go-xbuild-go-v1.0.11-raspberry-pi.d.tar.gz](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-raspberry-pi.d.tar.gz) | 1488560 |
 | Windows | [go-xbuild-go-v1.0.11-windows-386.d.zip](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-windows-386.d.zip) | 1588620 |
 | Windows | [go-xbuild-go-v1.0.11-windows-amd64.d.zip](https://github.com/muquit/go-xbuild-go/releases/download/v1.0.11/go-xbuild-go-v1.0.11-windows-amd64.d.zip) | 1644830 |
 
@@ -25,15 +25,15 @@ executable to a directory in your `PATH`. You may rename it to
 ## Checksums
 
 ```text
-16c407a7b03ec2195ab502d162611eded9f8b2db409c37d34cb1a4289c3a7d05  go-xbuild-go-v1.0.11-darwin-amd64.d.tar.gz
-37fef8684ba719f0cfd1b1810973c32642a3de99012876393ce0c34351551ed8  go-xbuild-go-v1.0.11-darwin-arm64.d.tar.gz
-145d135bb80eb2815a4923f268107d8030041c98c4e3ecbaada469d5ff663e02  go-xbuild-go-v1.0.11-linux-amd64.d.tar.gz
-20fa964c8d914bddd94deb0f41b80cb21d8042731a16d32c615c12a924e214f4  go-xbuild-go-v1.0.11-linux-arm.d.tar.gz
-81b8631d2b04898444e2db56af598113f19f7a5df53e592ebb3358d506e7163b  go-xbuild-go-v1.0.11-linux-arm64.d.tar.gz
-b5018634b7ace133d4f5a6e78659ff092efa8014183d1aca53597696f4483326  go-xbuild-go-v1.0.11-windows-386.d.zip
-e420f6b5a909a71a04c99415124ba764b82dd6ab80b305306d51ddba2287c854  go-xbuild-go-v1.0.11-windows-amd64.d.zip
-321db37ddfa7ec7d3e0318e877178da506efc45ad01adb70db545820e159aec2  go-xbuild-go-v1.0.11-raspberry-pi.d.tar.gz
-751398adb09c78b1a9ea2731e928f625ed08963a0196524dc156c7459d1a2693  go-xbuild-go-v1.0.11-raspberry-pi-jessie.d.tar.gz
+615b2e76bb094277b98849e1b67dcbaa4bb9e104c95618611cb3189b898e1a5f  go-xbuild-go-v1.0.11-darwin-amd64.d.tar.gz
+65c53903e1450fd42dd7935c9edb5aba8c1fc9650669e26c64ff49d41f025600  go-xbuild-go-v1.0.11-darwin-arm64.d.tar.gz
+e3a3072998d69093507bf39d20809b31e99a5560fc85ea3c01eaaf41584f71bc  go-xbuild-go-v1.0.11-linux-amd64.d.tar.gz
+0c8f49eba9813122b094d69ed28cf49698b3c006c1fd89b0541637a53930f454  go-xbuild-go-v1.0.11-linux-arm.d.tar.gz
+162979e78eaaf868c9406e532b6335bb09b2f8f8b8aad4f6a84f2c4fbbd78d5c  go-xbuild-go-v1.0.11-linux-arm64.d.tar.gz
+fe36c2d12f5e039e3f83fc5f7dc838a7513cc57873465e88e39af92ff7e0dbe6  go-xbuild-go-v1.0.11-windows-386.d.zip
+adce4b33c8f0dd0ff05e5d44fa04d64c674328c7964ddfd6989e215c6204881e  go-xbuild-go-v1.0.11-windows-amd64.d.zip
+d0fa12d7941008fbdb1552b37987f9b3fc9a7d9f30b78245ce50d8fa69720e3c  go-xbuild-go-v1.0.11-raspberry-pi.d.tar.gz
+a18049ee464e0420fe1c4ab4be6aa1f4e662b49a7476e67fbccbaed8d0819c42  go-xbuild-go-v1.0.11-raspberry-pi-jessie.d.tar.gz
 ```
 
 ## Archive contents

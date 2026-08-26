@@ -1,6 +1,6 @@
 # Synopsis
 ```
-go-xbuild-go v1.0.11
+go-xbuild-go v1.0.12
 A program to cross compile go programs and release any software to github
 
 Usage:
