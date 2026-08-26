@@ -10,16 +10,16 @@ class GoXbuildGo < Formula
 
   if OS.mac? && Hardware::CPU.arm?
     url "https://github.com/muquit/go-xbuild-go/releases/download/v1.0.12/go-xbuild-go-v1.0.12-darwin-arm64.d.tar.gz"
-    sha256 "74bc31c39474695c8695cfbb2ab992ae46bfa8eba00e67f221f8e551e9b4aa76"
+    sha256 "c8ba85f7188b77052694621745bb8a704248056a77d32d9d6d6e580ca75feb23"
   elsif OS.mac? && Hardware::CPU.intel?
     url "https://github.com/muquit/go-xbuild-go/releases/download/v1.0.12/go-xbuild-go-v1.0.12-darwin-amd64.d.tar.gz"
-    sha256 "399e44822466d6cc1a3fd499c027373d621b518189d04b11f6ae817f6f4d4668"
+    sha256 "3b1d6d34f03ab73cc8385ae1b7538af66637a60d4d405ccfb5982f9ad401bdd1"
   elsif OS.linux? && Hardware::CPU.intel?
     url "https://github.com/muquit/go-xbuild-go/releases/download/v1.0.12/go-xbuild-go-v1.0.12-linux-amd64.d.tar.gz"
-    sha256 "c9e409a7536464f478f4df8e089550175605bd774526b1d8fae35261b0168710"
+    sha256 "6e23fdaf2431752f1335c0f92493faddb31031d8584f04775bbbb811c7fb3439"
   elsif OS.linux? && Hardware::CPU.arm?
     url "https://github.com/muquit/go-xbuild-go/releases/download/v1.0.12/go-xbuild-go-v1.0.12-linux-arm64.d.tar.gz"
-    sha256 "327f303337205d70fde7027118c2fc1ebf7647dc4e12645a3bef408a9b425cb8"
+    sha256 "98ec1a80f30480c6e38be8ee15d5e05bcc6927f9e040e63572adc9294c98a8b2"
   end
 
   def install
